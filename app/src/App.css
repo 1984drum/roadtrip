@@ -1066,6 +1066,10 @@ body {
 .syncpanel__row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
 .syncpanel__row .offline__btn { flex: 1 1 30%; }
 .syncpanel__status { font-size: 0.66rem; color: var(--nature); margin-top: 0.5rem; }
+.syncpanel__cloud { margin-bottom: 0.6rem; }
+.syncpanel__on { font-size: 0.68rem; color: var(--nature); line-height: 1.5; margin-bottom: 0.55rem; }
+.syncpanel__row--backup { margin-top: 0.15rem; }
+.syncpanel__row--backup .offline__btn { flex: 1 1 30%; }
 
 /* ---------- Offline panel ---------- */
 .offline { padding: 0.2rem 0 0.6rem; }

@@ -1,0 +1,8 @@
+name = "roadtrip-sync"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# KV namespace id is filled in by `wrangler kv namespace create SYNC`
+[[kv_namespaces]]
+binding = "SYNC"
+id = "0e380d784f4949cbbdd56c47900d047b"

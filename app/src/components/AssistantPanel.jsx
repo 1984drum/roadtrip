@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { allPois } from "../lib/customRoute";
+import { cloudAvailable, proxyChat } from "../lib/cloudSync";
 
 const KEY_LS = "roadtrip.anthropic.key";
 const MODEL = "claude-haiku-4-5-20251001";
@@ -53,8 +54,9 @@ function parseAssistant(text) {
   return { reply: cleaned, route: null };
 }
 
-export default function AssistantPanel({ ratings, customRoute, onApplyRoute }) {
+export default function AssistantPanel({ ratings, customRoute, onApplyRoute, syncCode }) {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem(KEY_LS) || "");
+  const proxyMode = cloudAvailable() && !!syncCode;
   const [keyInput, setKeyInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -83,27 +85,34 @@ export default function AssistantPanel({ ratings, customRoute, onApplyRoute }) {
     setMessages(nextMessages);
     setBusy(true);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          max_tokens: 1000,
-          system: buildSystemPrompt(ratings, customRoute),
-          messages: nextMessages.map((m) => ({ role: m.role, content: m.text })),
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => null);
-        throw new Error(err?.error?.message || `API error ${res.status}`);
+      const system = buildSystemPrompt(ratings, customRoute);
+      const apiMessages = nextMessages.map((m) => ({ role: m.role, content: m.text }));
+      let raw;
+      if (proxyMode) {
+        raw = await proxyChat(syncCode, system, apiMessages);
+      } else {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true",
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            max_tokens: 1000,
+            system,
+            messages: apiMessages,
+          }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => null);
+          throw new Error(err?.error?.message || `API error ${res.status}`);
+        }
+        const json = await res.json();
+        raw = json.content?.map((b) => b.text || "").join("") || "";
       }
-      const json = await res.json();
-      const raw = json.content?.map((b) => b.text || "").join("") || "";
       const parsed = parseAssistant(raw);
       setMessages((m) => [...m, { role: "assistant", text: parsed.reply, route: parsed.route }]);
     } catch (e) {
@@ -114,7 +123,29 @@ export default function AssistantPanel({ ratings, customRoute, onApplyRoute }) {
     }
   };
 
-  if (!apiKey) {
+  if (!proxyMode && !apiKey) {
+    if (cloudAvailable()) {
+      return (
+        <div className="assistant">
+          <p className="assistant__blurb">
+            Turn on auto-sync in <strong>Backup &amp; sync</strong> and the assistant works right
+            here with no API key — your sync code doubles as its access pass. Or paste your own
+            Anthropic key below.
+          </p>
+          <div className="assistant__keyrow">
+            <input
+              type="password"
+              className="assistant__input"
+              placeholder="Anthropic API key (sk-ant-…) — optional"
+              value={keyInput}
+              onChange={(e) => setKeyInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveKey()}
+            />
+            <button className="assistant__send" onClick={saveKey}>Save</button>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="assistant">
         <p className="assistant__blurb">
@@ -178,7 +209,9 @@ export default function AssistantPanel({ ratings, customRoute, onApplyRoute }) {
           Send
         </button>
       </div>
-      <button className="assistant__forget" onClick={forgetKey}>Forget API key</button>
+      {!proxyMode && (
+        <button className="assistant__forget" onClick={forgetKey}>Forget API key</button>
+      )}
     </div>
   );
 }

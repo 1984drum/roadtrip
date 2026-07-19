@@ -10,6 +10,16 @@ import SyncPanel from "./components/SyncPanel";
 import { routeData, allWaypoints, getWaypoint } from "./data/routeData";
 import { useSavedRoutes } from "./hooks/useSavedRoutes";
 import { parseSyncFragment, applyImport } from "./lib/syncData";
+import {
+  cloudAvailable,
+  getSyncCode,
+  setSyncCode,
+  newSyncCode,
+  disableSync,
+  pullAndMerge,
+  pushCloud,
+  parsePairFragment,
+} from "./lib/cloudSync";
 import { useRoutes } from "./hooks/useRoutes";
 import { usePostcodes } from "./hooks/usePostcodes";
 import { useRatings } from "./hooks/useRatings";
@@ -49,6 +59,8 @@ export default function App() {
   const [syncOpen, setSyncOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const { savedRoutes, saveRoute, deleteRoute } = useSavedRoutes();
+  const [syncCode, setSyncCodeState] = useState(getSyncCode);
+  const [pulled, setPulled] = useState(false);
   const [baseLayer, setBaseLayer] = useState(
     () => localStorage.getItem("roadtrip.baselayer.v1") || "colour"
   );
@@ -117,6 +129,47 @@ export default function App() {
       location.reload();
     }
   }, []);
+
+  // Pair this device for auto-sync via a #pair= link
+  useEffect(() => {
+    const code = parsePairFragment(location.hash);
+    if (!code || !cloudAvailable()) return;
+    history.replaceState(null, "", location.pathname + location.search);
+    if (window.confirm("Link this device for auto-sync with your other devices?")) {
+      setSyncCode(code);
+      location.reload();
+    }
+  }, []);
+
+  // Auto-sync: pull + merge on open, then debounced push on every change
+  useEffect(() => {
+    if (!cloudAvailable() || !syncCode) return;
+    pullAndMerge(syncCode)
+      .then((changed) => {
+        if (changed) location.reload();
+        else setPulled(true);
+      })
+      .catch(() => setPulled(true)); // offline — keep local, push when back
+  }, [syncCode]);
+
+  useEffect(() => {
+    if (!cloudAvailable() || !syncCode || !pulled) return;
+    const t = setTimeout(() => pushCloud(syncCode).catch(() => {}), 2000);
+    return () => clearTimeout(t);
+  }, [ratings, savedRoutes, syncCode, pulled]);
+
+  const enableSync = () => {
+    const code = newSyncCode();
+    setSyncCodeState(code);
+    setPulled(true);
+    pushCloud(code).catch(() => {});
+  };
+
+  const disableSyncHere = () => {
+    disableSync();
+    setSyncCodeState(null);
+    setPulled(false);
+  };
 
   const buildMyRoute = async () => {
     setRouteError(null);
@@ -350,14 +403,21 @@ export default function App() {
             <span className="section-chevron">{assistantOpen ? "▾" : "▸"}</span>
           </button>
           {assistantOpen && (
-            <AssistantPanel ratings={ratings} customRoute={customRoute} onApplyRoute={applyStopIds} />
+            <AssistantPanel
+              ratings={ratings}
+              customRoute={customRoute}
+              onApplyRoute={applyStopIds}
+              syncCode={syncCode}
+            />
           )}
 
           <button className="section-toggle" onClick={() => setSyncOpen((v) => !v)}>
             <span>Backup & sync</span>
             <span className="section-chevron">{syncOpen ? "▾" : "▸"}</span>
           </button>
-          {syncOpen && <SyncPanel />}
+          {syncOpen && (
+            <SyncPanel syncCode={syncCode} onEnable={enableSync} onDisable={disableSyncHere} />
+          )}
 
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}
