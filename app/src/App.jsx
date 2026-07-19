@@ -1,16 +1,22 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import MapView, { BASE_LAYERS } from "./components/MapView";
 import PrintMyRoute from "./components/PrintMyRoute";
 import LegCard from "./components/LegCard";
 import DetailModal from "./components/DetailModal";
 import PrintLeg from "./components/PrintLeg";
 import OfflinePanel from "./components/OfflinePanel";
-import { routeData, allWaypoints } from "./data/routeData";
+import AssistantPanel from "./components/AssistantPanel";
+import SyncPanel from "./components/SyncPanel";
+import { routeData, allWaypoints, getWaypoint } from "./data/routeData";
+import { useSavedRoutes } from "./hooks/useSavedRoutes";
+import { parseSyncFragment, applyImport } from "./lib/syncData";
 import { useRoutes } from "./hooks/useRoutes";
 import { usePostcodes } from "./hooks/usePostcodes";
 import { useRatings } from "./hooks/useRatings";
 import { useGeolocation, distanceM, formatDistance } from "./hooks/useGeolocation";
-import { buildStopList, fetchCustomRoute } from "./lib/customRoute";
+import { buildStopList, fetchCustomRoute, allPois } from "./lib/customRoute";
+
+const poiById = new Map(allPois.map((p) => [p.id, p]));
 import "./App.css";
 
 const FILTERS = [
@@ -39,6 +45,10 @@ export default function App() {
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
   const [printMyRoute, setPrintMyRoute] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [saveName, setSaveName] = useState("");
+  const { savedRoutes, saveRoute, deleteRoute } = useSavedRoutes();
   const [baseLayer, setBaseLayer] = useState(
     () => localStorage.getItem("roadtrip.baselayer.v1") || "colour"
   );
@@ -71,6 +81,42 @@ export default function App() {
     () => Object.values(ratings).filter((r) => r >= minRating).length,
     [ratings, minRating]
   );
+
+  // Load a list of stop ids (from a saved route or the AI assistant) onto the map
+  const applyStopIds = async (stopIds, name) => {
+    const stops = [
+      getWaypoint("macc-start"),
+      ...stopIds.map((id) => poiById.get(id)).filter(Boolean),
+      getWaypoint("macc-end"),
+    ];
+    if (stops.length < 3) {
+      setRouteError("That route has no recognisable stops.");
+      return;
+    }
+    setRouteBuilding(true);
+    setRouteError(null);
+    try {
+      setCustomRoute(await fetchCustomRoute(stops));
+      if (name) setSaveName(name);
+      setMyRouteOpen(true);
+    } catch {
+      setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
+    } finally {
+      setRouteBuilding(false);
+    }
+  };
+
+  // Import ratings/routes arriving via a #sync= link from another device
+  useEffect(() => {
+    const payload = parseSyncFragment(location.hash);
+    if (!payload) return;
+    history.replaceState(null, "", location.pathname + location.search);
+    const summary = `${Object.keys(payload.ratings || {}).length} ratings and ${(payload.savedRoutes || []).length} saved routes`;
+    if (window.confirm(`Import ${summary} from this sync link? They merge with anything already here.`)) {
+      applyImport(payload);
+      location.reload();
+    }
+  }, []);
 
   const buildMyRoute = async () => {
     setRouteError(null);
@@ -239,6 +285,48 @@ export default function App() {
                       </li>
                     ))}
                   </ol>
+                  <div className="saveroute__row">
+                    <input
+                      className="saveroute__name"
+                      placeholder="Name this route…"
+                      value={saveName}
+                      onChange={(e) => setSaveName(e.target.value)}
+                    />
+                    <button
+                      className="saveroute__btn"
+                      onClick={() => {
+                        saveRoute(saveName, customRoute, { minRating, includeChargers });
+                        setSaveName("");
+                      }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {savedRoutes.length > 0 && (
+                <div className="savedlist">
+                  <h4 className="savedlist__head">Saved routes</h4>
+                  {savedRoutes.map((r) => (
+                    <div key={r.id} className="savedlist__row">
+                      <button className="savedlist__load" onClick={() => applyStopIds(r.stopIds)}>
+                        <span className="savedlist__name">{r.name}</span>
+                        <span className="savedlist__meta">
+                          {r.stopIds.length} stops · {(r.distanceM / 1609.344).toFixed(0)} mi · {r.date}
+                        </span>
+                      </button>
+                      <button
+                        className="savedlist__del"
+                        title="Delete saved route"
+                        onClick={() => {
+                          if (window.confirm(`Delete "${r.name}"?`)) deleteRoute(r.id);
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -256,6 +344,20 @@ export default function App() {
           <div style={{ display: offlineOpen ? "block" : "none" }}>
             <OfflinePanel routes={routes} baseLayer={baseLayer} onStatus={setOfflineStatus} />
           </div>
+
+          <button className="section-toggle" onClick={() => setAssistantOpen((v) => !v)}>
+            <span>✨ Route assistant (AI)</span>
+            <span className="section-chevron">{assistantOpen ? "▾" : "▸"}</span>
+          </button>
+          {assistantOpen && (
+            <AssistantPanel ratings={ratings} customRoute={customRoute} onApplyRoute={applyStopIds} />
+          )}
+
+          <button className="section-toggle" onClick={() => setSyncOpen((v) => !v)}>
+            <span>Backup & sync</span>
+            <span className="section-chevron">{syncOpen ? "▾" : "▸"}</span>
+          </button>
+          {syncOpen && <SyncPanel />}
 
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}

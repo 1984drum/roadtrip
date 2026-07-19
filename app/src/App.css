@@ -916,6 +916,157 @@ body {
 
 .offline__stale { color: #f87171; }
 
+/* ---------- Saved routes ---------- */
+.saveroute__row { display: flex; gap: 0.45rem; margin-top: 0.6rem; }
+.saveroute__name {
+  font: inherit;
+  font-size: 0.72rem;
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-dark);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.6rem;
+}
+.saveroute__btn {
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.45rem;
+  border: 1px solid #f59e0b88;
+  background: #f59e0b22;
+  color: #fbbf24;
+  cursor: pointer;
+}
+.savedlist { margin-top: 0.8rem; border-top: 1px solid #33415560; padding-top: 0.55rem; }
+.savedlist__head {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  margin-bottom: 0.4rem;
+}
+.savedlist__row { display: flex; gap: 0.4rem; align-items: stretch; margin-bottom: 0.35rem; }
+.savedlist__load {
+  font: inherit;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border);
+  background: #33415540;
+  color: var(--text);
+  cursor: pointer;
+}
+.savedlist__load:hover { border-color: #f59e0b88; }
+.savedlist__name { font-size: 0.74rem; font-weight: 600; }
+.savedlist__meta { font-size: 0.62rem; color: var(--text-dim); }
+.savedlist__del {
+  font: inherit;
+  width: 30px;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+.savedlist__del:hover { color: #f87171; border-color: #f87171; }
+
+/* ---------- AI assistant ---------- */
+.assistant { padding: 0.2rem 0 0.6rem; }
+.assistant__blurb { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 0.6rem; }
+.assistant__note { font-size: 0.62rem; color: #64748b; margin-top: 0.45rem; line-height: 1.5; }
+.assistant__thread {
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.55rem;
+  scrollbar-width: thin;
+}
+.assistant__msg {
+  max-width: 92%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.assistant__msg--user {
+  align-self: flex-end;
+  background: #0ea5e926;
+  border: 1px solid #0ea5e955;
+  color: #e0f2fe;
+}
+.assistant__msg--assistant {
+  align-self: flex-start;
+  background: #33415550;
+  border: 1px solid var(--border);
+  color: #e2e8f0;
+}
+.assistant__msg--error { border-color: #f8717188; color: #fca5a5; }
+.assistant__apply {
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 700;
+  margin-top: 0.4rem;
+  width: 100%;
+  padding: 0.4rem;
+  border-radius: 0.4rem;
+  border: 1px solid #f59e0b88;
+  background: #f59e0b22;
+  color: #fbbf24;
+  cursor: pointer;
+}
+.assistant__apply:hover { background: #f59e0b33; }
+.assistant__keyrow { display: flex; gap: 0.45rem; }
+.assistant__input {
+  font: inherit;
+  font-size: 0.72rem;
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-dark);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.6rem;
+}
+.assistant__send {
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.45rem;
+  border: 1px solid #0ea5e988;
+  background: #0ea5e922;
+  color: var(--glow);
+  cursor: pointer;
+}
+.assistant__send:disabled { opacity: 0.5; cursor: default; }
+.assistant__forget {
+  font: inherit;
+  font-size: 0.6rem;
+  margin-top: 0.45rem;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ---------- Sync panel ---------- */
+.syncpanel { padding: 0.2rem 0 0.6rem; }
+.syncpanel__row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.syncpanel__row .offline__btn { flex: 1 1 30%; }
+.syncpanel__status { font-size: 0.66rem; color: var(--nature); margin-top: 0.5rem; }
+
 /* ---------- Offline panel ---------- */
 .offline { padding: 0.2rem 0 0.6rem; }
 .offline__status { font-size: 0.68rem; color: var(--nature); margin-bottom: 0.5rem; }
