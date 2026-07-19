@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import MapView from "./components/MapView";
+import MapView, { BASE_LAYERS } from "./components/MapView";
+import PrintMyRoute from "./components/PrintMyRoute";
 import LegCard from "./components/LegCard";
 import DetailModal from "./components/DetailModal";
 import PrintLeg from "./components/PrintLeg";
@@ -37,6 +38,15 @@ export default function App() {
   const [myRouteOpen, setMyRouteOpen] = useState(false);
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
+  const [printMyRoute, setPrintMyRoute] = useState(false);
+  const [baseLayer, setBaseLayer] = useState(
+    () => localStorage.getItem("roadtrip.baselayer.v1") || "colour"
+  );
+
+  const switchLayer = (key) => {
+    setBaseLayer(key);
+    localStorage.setItem("roadtrip.baselayer.v1", key);
+  };
   const [minRating, setMinRating] = useState(7);
   const [includeChargers, setIncludeChargers] = useState(true);
   const [customRoute, setCustomRoute] = useState(null);
@@ -215,6 +225,9 @@ export default function App() {
                     {Math.floor(customRoute.durationS / 3600)}h{" "}
                     {Math.round((customRoute.durationS % 3600) / 60)}m driving
                   </p>
+                  <button className="myroute__print" onClick={() => setPrintMyRoute(true)}>
+                    🖨 Print route — A4 sheets with photos
+                  </button>
                   <ol className="myroute__list">
                     {customRoute.stops.slice(1, -1).map((s) => (
                       <li key={s.id} onClick={() => focusWaypoint(s)}>
@@ -241,7 +254,7 @@ export default function App() {
           </button>
           {/* stays mounted so auto-download runs with the section collapsed */}
           <div style={{ display: offlineOpen ? "block" : "none" }}>
-            <OfflinePanel routes={routes} onStatus={setOfflineStatus} />
+            <OfflinePanel routes={routes} baseLayer={baseLayer} onStatus={setOfflineStatus} />
           </div>
 
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
@@ -278,11 +291,32 @@ export default function App() {
           routes={routes}
           ratings={ratings}
           customRoute={customRoute}
+          baseLayer={baseLayer}
           userPosition={gps.tracking ? gps.position : null}
           follow={follow}
           focusRequest={focusRequest}
           onOpenDetail={openDetail}
         />
+
+        {/* Base layer switcher */}
+        <div className="layer-switcher">
+          {Object.entries(BASE_LAYERS).map(([key, def]) => (
+            <button
+              key={key}
+              className={`layer-btn ${baseLayer === key ? "layer-btn--on" : ""}`}
+              onClick={() => switchLayer(key)}
+            >
+              {def.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Quick print for the active custom route */}
+        {customRoute && (
+          <button className="print-route-fab" onClick={() => setPrintMyRoute(true)}>
+            🖨 Print route
+          </button>
+        )}
 
         {/* GPS controls */}
         <div className="gps-controls">
@@ -369,6 +403,16 @@ export default function App() {
           route={routes[`leg${printLeg.id}`]}
           postcodes={postcodes}
           onDone={closePrint}
+        />
+      )}
+
+      {printMyRoute && customRoute && (
+        <PrintMyRoute
+          customRoute={customRoute}
+          postcodes={postcodes}
+          ratings={ratings}
+          minRating={minRating}
+          onDone={() => setPrintMyRoute(false)}
         />
       )}
     </div>

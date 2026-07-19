@@ -5,6 +5,45 @@ import { routeData, legRoutingCoords } from "../data/routeData";
 import { optionalSites } from "../data/optionalSites";
 import { icons } from "../lib/icons";
 
+export const BASE_LAYERS = {
+  colour: {
+    label: "Map",
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    subdomains: "abcd",
+    maxZoom: 20,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+  satellite: {
+    label: "Satellite",
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    maxZoom: 19,
+    attribution: "Imagery &copy; Esri, Maxar, Earthstar Geographics",
+  },
+  terrain: {
+    label: "Terrain",
+    url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    subdomains: "abc",
+    maxZoom: 17,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
+  },
+  dark: {
+    label: "Dark",
+    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    subdomains: "abcd",
+    maxZoom: 20,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+};
+
+// Roughly England + Wales with a little sea margin — no pointless zooming out
+const UK_BOUNDS = [
+  [49.5, -7.5],
+  [56.2, 2.2],
+];
+
 function createCustomIcon(type, kind) {
   const isOptional = type === "optional";
   const size = type === "start" ? 28 : isOptional ? 26 : 32;
@@ -39,6 +78,7 @@ export default function MapView({
   routes,
   ratings,
   customRoute,
+  baseLayer,
   userPosition,
   follow,
   focusRequest, // {lat, lng, wpId, ts} — imperative "fly here" signal from the sidebar
@@ -50,19 +90,25 @@ export default function MapView({
   const linesRef = useRef([]);
   const userLayerRef = useRef(null);
   const customLayerRef = useRef(null);
+  const baseLayerRef = useRef(null);
   const onOpenDetailRef = useRef(onOpenDetail);
   onOpenDetailRef.current = onOpenDetail;
 
   // Init once
   useEffect(() => {
-    const map = L.map(mapEl.current, { zoomControl: false }).setView([52.2, -2.5], 7);
+    const map = L.map(mapEl.current, {
+      zoomControl: false,
+      attributionControl: false,
+      minZoom: 6, // no zooming out past England
+      maxZoom: 19,
+      maxBounds: UK_BOUNDS,
+      maxBoundsViscosity: 1.0,
+      zoomSnap: 0.5, // finer zoom steps
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 120,
+    }).setView([52.2, -2.5], 7);
     L.control.zoom({ position: "topright" }).addTo(map);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 20,
-    }).addTo(map);
+    L.control.attribution({ position: "bottomleft", prefix: false }).addTo(map);
 
     const allPoints = routeData.flatMap((leg) => legRoutingCoords(leg));
     map.fitBounds(L.latLngBounds(allPoints), { padding: [40, 40] });
@@ -70,6 +116,21 @@ export default function MapView({
     mapRef.current = map;
     return () => map.remove();
   }, []);
+
+  // Base layer switching
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const def = BASE_LAYERS[baseLayer] || BASE_LAYERS.colour;
+    if (baseLayerRef.current) map.removeLayer(baseLayerRef.current);
+    baseLayerRef.current = L.tileLayer(def.url, {
+      attribution: def.attribution,
+      subdomains: def.subdomains || "abc",
+      maxZoom: 19,
+      maxNativeZoom: def.maxZoom,
+    }).addTo(map);
+    mapEl.current.classList.toggle("map-root--light", baseLayer !== "dark" && baseLayer !== "satellite");
+  }, [baseLayer]);
 
   // Route lines: real OSRM geometry when available, straight fallback otherwise.
   // Tapping a line shows that leg's distance and driving time.

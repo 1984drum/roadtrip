@@ -4,7 +4,7 @@ import { optionalSitesForLeg } from "../data/optionalSites";
 import { poiLabel } from "./DetailModal";
 
 // Projects [lat,lng] points into a WIDTH x HEIGHT viewBox for the route sketch.
-function projectLine(points, width, height, pad = 24) {
+export function projectLine(points, width, height, pad = 24) {
   const lats = points.map((p) => p[0]);
   const lngs = points.map((p) => p[1]);
   const minLat = Math.min(...lats), maxLat = Math.max(...lats);

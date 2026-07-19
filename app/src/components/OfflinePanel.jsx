@@ -5,6 +5,7 @@ import {
   downloadTiles,
   clearTiles,
   estimateBytes,
+  cartoStyle,
   META_KEY,
 } from "../lib/offlineTiles";
 
@@ -18,7 +19,8 @@ function looksMetered() {
   return !!c && (c.saveData || c.type === "cellular");
 }
 
-export default function OfflinePanel({ routes, onStatus }) {
+export default function OfflinePanel({ routes, baseLayer, onStatus }) {
+  const style = cartoStyle(baseLayer);
   const [meta, setMeta] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem(META_KEY));
@@ -56,11 +58,12 @@ export default function OfflinePanel({ routes, onStatus }) {
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     setProgress({ done: 0, total: tiles.length, bytes: 0, failed: 0 });
-    const result = await downloadTiles(tiles, setProgress, ctrl.signal);
+    const result = await downloadTiles(tiles, style, setProgress, ctrl.signal);
     if (!ctrl.signal.aborted) {
       const m = {
         tiles: result.done - result.failed,
         bytes: result.bytes,
+        style,
         date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
       };
       localStorage.setItem(META_KEY, JSON.stringify(m));
@@ -107,6 +110,9 @@ export default function OfflinePanel({ routes, onStatus }) {
         <p className="offline__meta">
           ✓ Offline maps ready — {meta.tiles.toLocaleString()} tiles ({fmtMB(meta.bytes)}), saved{" "}
           {meta.date}.
+          {meta.style && meta.style !== style && (
+            <span className="offline__stale"> Saved for a different map style — re-download for the current one.</span>
+          )}
         </p>
       )}
 

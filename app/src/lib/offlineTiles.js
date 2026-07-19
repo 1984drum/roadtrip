@@ -38,19 +38,25 @@ export function computeTileList(routes) {
   return [...keys];
 }
 
+/** CARTO style path for a base-layer key; satellite/terrain fall back to the
+    colour map so there's always a usable offline baseline. */
+export function cartoStyle(baseLayer) {
+  return baseLayer === "dark" ? "dark_all" : "rastertiles/voyager";
+}
+
 /** Mirrors Leaflet's subdomain pick and retina suffix so cache keys match. */
-export function tileUrl(key) {
+export function tileUrl(key, style = "rastertiles/voyager") {
   const [z, x, y] = key.split("/").map(Number);
   const s = "abcd"[Math.abs(x + y) % 4];
   const r = L.Browser.retina ? "@2x" : "";
-  return `https://${s}.basemaps.cartocdn.com/dark_all/${z}/${x}/${y}${r}.png`;
+  return `https://${s}.basemaps.cartocdn.com/${style}/${z}/${x}/${y}${r}.png`;
 }
 
 export function estimateBytes(count) {
   return count * (L.Browser.retina ? 32000 : 16000);
 }
 
-export async function downloadTiles(keys, onProgress, signal) {
+export async function downloadTiles(keys, style, onProgress, signal) {
   const cache = await caches.open(TILE_CACHE);
   let done = 0;
   let bytes = 0;
@@ -61,7 +67,7 @@ export async function downloadTiles(keys, onProgress, signal) {
     while (queue.length) {
       if (signal?.aborted) return;
       const key = queue.shift();
-      const url = tileUrl(key);
+      const url = tileUrl(key, style);
       try {
         if (!(await cache.match(url))) {
           let res;

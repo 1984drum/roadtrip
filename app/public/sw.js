@@ -1,6 +1,6 @@
 /* Road Trip service worker — offline app shell + map tile cache.
    Bump VERSION to invalidate the app cache after breaking changes. */
-const VERSION = "v1";
+const VERSION = "v2";
 const APP_CACHE = `roadtrip-app-${VERSION}`;
 const TILE_CACHE = "roadtrip-tiles"; // shared with the in-app tile downloader
 const EXT_CACHE = "roadtrip-ext";
@@ -67,8 +67,13 @@ self.addEventListener("fetch", (event) => {
   // Own hashed assets: immutable, cache-first
   if (url.origin === self.location.origin) return cacheFirst(event, APP_CACHE);
 
-  // Map tiles: cache-first (also fed by the bulk downloader)
-  if (url.hostname.endsWith("basemaps.cartocdn.com")) return cacheFirst(event, TILE_CACHE);
+  // Map tiles (all base layers): cache-first (also fed by the bulk downloader)
+  if (
+    url.hostname.endsWith("basemaps.cartocdn.com") ||
+    url.hostname.endsWith("arcgisonline.com") ||
+    url.hostname.endsWith("opentopomap.org")
+  )
+    return cacheFirst(event, TILE_CACHE);
 
   // Fonts + Wikipedia images
   if (
