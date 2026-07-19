@@ -1,4 +1,6 @@
-# Electrified Antiquity — Macclesfield ⇄ Devon EV Road Trip
+# Road Trip — Macclesfield ⇄ Devon EV Road Trip
+
+Live at https://roadtrip.1984drum.com (auto-deploys from `main` via GitHub Actions).
 
 Mobile-first React web app for a 6-leg Tesla road trip from Macclesfield to the
 North Devon coast and back, threading Tesla Superchargers, YHA stays, medieval
@@ -49,6 +51,16 @@ use, deploy to any static host, e.g. Netlify/Vercel/Cloudflare Pages.)
 - **A4 leg sheets** — the "🖨 PDF" button on each leg card opens a
   print-optimised A4 itinerary (route sketch, stops with postcodes and
   coordinates, optional detours nearby) — print it or save as PDF to share.
+- **Star ratings & personalised route** — rate any stop 1–10 in its modal
+  (stored on-device); the "★ My Route" section builds an optimised loop
+  through everything rated above your chosen threshold (2-opt ordering +
+  OSRM), optionally always including Superchargers.
+- **Offline / PWA** — a service worker caches the app shell, and the
+  "Offline maps" section bulk-downloads ~2,200 map tiles covering the route
+  corridor (z7–13 + close-up rings at every stop, ~40 MB), auto-starting on
+  unmetered connections. Installable to the home screen. Re-run
+  `scripts/fetch-venue-details.mjs` after changing POIs so place info stays
+  baked into the bundle.
 
 ## Architecture
 
