@@ -1,6 +1,8 @@
 # Road Trip — Macclesfield ⇄ Devon EV Road Trip
 
 Live at https://roadtrip.1984drum.com (auto-deploys from `main` via GitHub Actions).
+See [../HANDOFF.md](../HANDOFF.md) for the full project handoff: accounts,
+deployment, feature inventory, storage keys and known issues.
 
 Mobile-first React web app for a 6-leg Tesla road trip from Macclesfield to the
 North Devon coast and back, threading Tesla Superchargers, YHA stays, medieval
@@ -61,6 +63,15 @@ use, deploy to any static host, e.g. Netlify/Vercel/Cloudflare Pages.)
   unmetered connections. Installable to the home screen. Re-run
   `scripts/fetch-venue-details.mjs` after changing POIs so place info stays
   baked into the bundle.
+- **Sketch mode** — "✏ Sketch route" drops six draggable handles (start,
+  20–80%, end) on the current route; drag them anywhere and Build converts
+  the sketch into a real OSRM road route.
+- **Base layers** — coloured CARTO Voyager (default), Esri satellite,
+  OpenTopoMap terrain, or dark; map bounded to England with half-step zoom.
+- **Saved routes & auto-sync** — name and save any custom/sketched route;
+  ratings and routes sync across devices via a Cloudflare Worker + KV
+  (`../worker/`) using a private sync code and pair links, with sync-link /
+  JSON-file backup as fallback.
 
 ## Architecture
 
