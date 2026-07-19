@@ -66,6 +66,49 @@ export function buildStopList(ratings, minRating, includeChargers) {
   return pts;
 }
 
+/** Evenly-spaced points along a polyline at the given fractions (0..1). */
+export function pointsAlongLine(line, fractions) {
+  const cum = [0];
+  for (let i = 1; i < line.length; i++) {
+    cum.push(
+      cum[i - 1] +
+        distanceM(
+          { lat: line[i - 1][0], lng: line[i - 1][1] },
+          { lat: line[i][0], lng: line[i][1] }
+        )
+    );
+  }
+  const total = cum[cum.length - 1];
+  return fractions.map((f) => {
+    const target = f * total;
+    if (target <= 0) return [...line[0]];
+    if (target >= total) return [...line[line.length - 1]];
+    let i = 1;
+    while (cum[i] < target) i++;
+    const t = (target - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
+    return [
+      line[i - 1][0] + (line[i][0] - line[i - 1][0]) * t,
+      line[i - 1][1] + (line[i][1] - line[i - 1][1]) * t,
+    ];
+  });
+}
+
+/** Pseudo-waypoints for a sketched route (arbitrary map points, not POIs). */
+export function makeSketchStops(points) {
+  return points.map((p, i) => ({
+    id: `sketch-${i}`,
+    name:
+      i === 0
+        ? "Start (sketched)"
+        : i === points.length - 1
+          ? "Finish (sketched)"
+          : `Via ${i} (sketched)`,
+    lat: p[0],
+    lng: p[1],
+    type: "sketch",
+  }));
+}
+
 export async function fetchCustomRoute(stops) {
   const pairs = stops.map((s) => `${s.lng},${s.lat}`).join(";");
   const url = `https://router.project-osrm.org/route/v1/driving/${pairs}?overview=full&geometries=geojson&steps=false`;

@@ -880,6 +880,84 @@ body {
 }
 .print-route-fab:hover { background: #fbbf24; }
 
+/* ---------- Sketch mode ---------- */
+.sketch-fab {
+  position: absolute;
+  bottom: 70px;
+  left: 12px;
+  z-index: 800;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #f472b6;
+  background: rgba(30, 41, 59, 0.92);
+  color: #f9a8d4;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+.sketch-fab:hover:not(:disabled) { background: #f472b622; }
+.sketch-fab:disabled { opacity: 0.5; cursor: default; }
+
+.sketch-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #f472b688;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  max-width: calc(100% - 24px);
+}
+.sketch-bar__hint { font-size: 0.68rem; color: #f9a8d4; white-space: nowrap; }
+.sketch-bar__build {
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #f472b6;
+  background: #f472b6;
+  color: #0f172a;
+  cursor: pointer;
+}
+.sketch-bar__build:disabled { opacity: 0.6; cursor: wait; }
+.sketch-bar__cancel {
+  font: inherit;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.sketch-handle {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #f472b6;
+  color: #0f172a;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
+  cursor: grab;
+}
+.sketch-handle:active { cursor: grabbing; }
+.sketch-handle--end { background: #fff; color: #0f172a; border-color: #f472b6; font-size: 12px; }
+
 /* ---------- Custom route print: stop cards ---------- */
 .print-stops-heading { break-before: page; }
 .print-stop {
@@ -1306,4 +1384,7 @@ body {
   .layer-btn:last-child { border-right: none; }
 
   .print-route-fab { bottom: 56px; left: 8px; font-size: 0.64rem; }
+  .sketch-fab { bottom: 100px; left: 8px; font-size: 0.64rem; }
+  .sketch-bar { top: 8px; flex-wrap: wrap; justify-content: center; border-radius: 0.8rem; }
+  .sketch-bar__hint { white-space: normal; text-align: center; }
 }

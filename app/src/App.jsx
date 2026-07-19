@@ -24,7 +24,13 @@ import { useRoutes } from "./hooks/useRoutes";
 import { usePostcodes } from "./hooks/usePostcodes";
 import { useRatings } from "./hooks/useRatings";
 import { useGeolocation, distanceM, formatDistance } from "./hooks/useGeolocation";
-import { buildStopList, fetchCustomRoute, allPois } from "./lib/customRoute";
+import {
+  buildStopList,
+  fetchCustomRoute,
+  allPois,
+  pointsAlongLine,
+  makeSketchStops,
+} from "./lib/customRoute";
 
 const poiById = new Map(allPois.map((p) => [p.id, p]));
 import "./App.css";
@@ -55,12 +61,13 @@ export default function App() {
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
   const [printMyRoute, setPrintMyRoute] = useState(false);
-  const [assistantOpen, setAssistantOpen] = useState(false);
   const [syncOpen, setSyncOpen] = useState(false);
   const [saveName, setSaveName] = useState("");
   const { savedRoutes, saveRoute, deleteRoute } = useSavedRoutes();
   const [syncCode, setSyncCodeState] = useState(getSyncCode);
   const [pulled, setPulled] = useState(false);
+  const [sketchMode, setSketchMode] = useState(false);
+  const [sketchPoints, setSketchPoints] = useState(null);
   const [baseLayer, setBaseLayer] = useState(
     () => localStorage.getItem("roadtrip.baselayer.v1") || "colour"
   );
@@ -169,6 +176,53 @@ export default function App() {
     disableSync();
     setSyncCodeState(null);
     setPulled(false);
+  };
+
+  // Sketch mode: handles at 0/20/40/60/80/100% of the visible route
+  const routesReady = routeData.every((l) => routes[`leg${l.id}`]);
+  const startSketch = () => {
+    const line =
+      customRoute?.line ||
+      (routesReady ? routeData.flatMap((l) => routes[`leg${l.id}`].line) : null);
+    if (!line) return;
+    setSketchPoints(pointsAlongLine(line, [0, 0.2, 0.4, 0.6, 0.8, 1]));
+    setSketchMode(true);
+    setSheetOpen(false);
+  };
+
+  const cancelSketch = () => {
+    setSketchMode(false);
+    setSketchPoints(null);
+  };
+
+  const buildFromSketch = async () => {
+    if (!sketchPoints) return;
+    setRouteBuilding(true);
+    setRouteError(null);
+    try {
+      setCustomRoute(await fetchCustomRoute(makeSketchStops(sketchPoints)));
+      setSaveName("Sketched route");
+      setSketchMode(false);
+      setSketchPoints(null);
+      setMyRouteOpen(true);
+    } catch {
+      setRouteError("Couldn't route the sketch via OSRM — try again in a moment.");
+    } finally {
+      setRouteBuilding(false);
+    }
+  };
+
+  const applyPoints = async (points) => {
+    setRouteBuilding(true);
+    setRouteError(null);
+    try {
+      setCustomRoute(await fetchCustomRoute(makeSketchStops(points)));
+      setMyRouteOpen(true);
+    } catch {
+      setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
+    } finally {
+      setRouteBuilding(false);
+    }
   };
 
   const buildMyRoute = async () => {
@@ -363,10 +417,14 @@ export default function App() {
                   <h4 className="savedlist__head">Saved routes</h4>
                   {savedRoutes.map((r) => (
                     <div key={r.id} className="savedlist__row">
-                      <button className="savedlist__load" onClick={() => applyStopIds(r.stopIds)}>
+                      <button
+                        className="savedlist__load"
+                        onClick={() => (r.points ? applyPoints(r.points) : applyStopIds(r.stopIds))}
+                      >
                         <span className="savedlist__name">{r.name}</span>
                         <span className="savedlist__meta">
-                          {r.stopIds.length} stops · {(r.distanceM / 1609.344).toFixed(0)} mi · {r.date}
+                          {r.points ? `sketched · ${r.points.length} points` : `${r.stopIds.length} stops`} ·{" "}
+                          {(r.distanceM / 1609.344).toFixed(0)} mi · {r.date}
                         </span>
                       </button>
                       <button
@@ -398,11 +456,9 @@ export default function App() {
             <OfflinePanel routes={routes} baseLayer={baseLayer} onStatus={setOfflineStatus} />
           </div>
 
-          <button className="section-toggle" onClick={() => setAssistantOpen((v) => !v)}>
-            <span>✨ Route assistant (AI)</span>
-            <span className="section-chevron">{assistantOpen ? "▾" : "▸"}</span>
-          </button>
-          {assistantOpen && (
+          {/* AI route assistant on hold — sketch mode replaces it for now.
+              Re-enable by restoring this block (AssistantPanel + worker /ai are still live). */}
+          {false && (
             <AssistantPanel
               ratings={ratings}
               customRoute={customRoute}
@@ -454,6 +510,9 @@ export default function App() {
           ratings={ratings}
           customRoute={customRoute}
           baseLayer={baseLayer}
+          sketchMode={sketchMode}
+          sketchPoints={sketchPoints}
+          onSketchChange={setSketchPoints}
           userPosition={gps.tracking ? gps.position : null}
           follow={follow}
           focusRequest={focusRequest}
@@ -474,10 +533,31 @@ export default function App() {
         </div>
 
         {/* Quick print for the active custom route */}
-        {customRoute && (
+        {customRoute && !sketchMode && (
           <button className="print-route-fab" onClick={() => setPrintMyRoute(true)}>
             🖨 Print route
           </button>
+        )}
+
+        {/* Sketch mode */}
+        {!sketchMode && (
+          <button
+            className="sketch-fab"
+            onClick={startSketch}
+            disabled={!routesReady && !customRoute}
+            title="Drag six handles to roughly reshape the loop, then build it into a real route"
+          >
+            ✏ Sketch route
+          </button>
+        )}
+        {sketchMode && (
+          <div className="sketch-bar">
+            <span className="sketch-bar__hint">Drag the handles to reshape the loop</span>
+            <button className="sketch-bar__build" onClick={buildFromSketch} disabled={routeBuilding}>
+              {routeBuilding ? "Routing…" : "Build route"}
+            </button>
+            <button className="sketch-bar__cancel" onClick={cancelSketch}>Cancel</button>
+          </div>
         )}
 
         {/* GPS controls */}

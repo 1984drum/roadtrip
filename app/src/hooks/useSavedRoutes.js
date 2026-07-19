@@ -26,11 +26,14 @@ export function useSavedRoutes() {
   const [savedRoutes, setSavedRoutes] = useState(load);
 
   const saveRoute = useCallback((name, customRoute, settings) => {
+    const isSketch = customRoute.stops.some((s) => s.type === "sketch");
     const entry = {
       id: `route-${Math.random().toString(36).slice(2, 9)}`,
       name: name.trim() || "Untitled route",
       date: new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
-      stopIds: customRoute.stops.slice(1, -1).map((s) => s.id),
+      // sketched routes are arbitrary map points; built routes reference POI ids
+      stopIds: isSketch ? null : customRoute.stops.slice(1, -1).map((s) => s.id),
+      points: isSketch ? customRoute.stops.map((s) => [s.lat, s.lng]) : null,
       distanceM: customRoute.distanceM,
       durationS: customRoute.durationS,
       minRating: settings?.minRating ?? null,

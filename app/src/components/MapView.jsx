@@ -79,6 +79,9 @@ export default function MapView({
   ratings,
   customRoute,
   baseLayer,
+  sketchMode,
+  sketchPoints,
+  onSketchChange,
   userPosition,
   follow,
   focusRequest, // {lat, lng, wpId, ts} — imperative "fly here" signal from the sidebar
@@ -91,8 +94,11 @@ export default function MapView({
   const userLayerRef = useRef(null);
   const customLayerRef = useRef(null);
   const baseLayerRef = useRef(null);
+  const sketchLayerRef = useRef(null);
   const onOpenDetailRef = useRef(onOpenDetail);
   onOpenDetailRef.current = onOpenDetail;
+  const onSketchChangeRef = useRef(onSketchChange);
+  onSketchChangeRef.current = onSketchChange;
 
   // Init once
   useEffect(() => {
@@ -262,6 +268,61 @@ export default function MapView({
     if (!map || !focusRequest) return;
     map.flyTo([focusRequest.lat, focusRequest.lng], 14, { duration: 1.2 });
   }, [focusRequest]);
+
+  // Sketch mode: six draggable handles + dashed sketch line.
+  // The layer is created once per sketch session ([sketchMode] deps only) —
+  // drags mutate Leaflet state directly and report positions upward without
+  // tearing the layer down mid-gesture.
+  const sketchPointsRef = useRef(sketchPoints);
+  sketchPointsRef.current = sketchPoints;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (sketchLayerRef.current) {
+      map.removeLayer(sketchLayerRef.current);
+      sketchLayerRef.current = null;
+    }
+    const points = sketchPointsRef.current;
+    if (!sketchMode || !points?.length) return;
+
+    const group = L.layerGroup();
+    const line = L.polyline(points, {
+      color: "#f472b6",
+      weight: 3,
+      dashArray: "8 8",
+      opacity: 0.9,
+      interactive: false,
+    }).addTo(group);
+
+    const markers = points.map((pt, i) => {
+      const isEnd = i === 0 || i === points.length - 1;
+      const label = i === 0 ? "S" : i === points.length - 1 ? "E" : `${i * 20}%`;
+      const marker = L.marker(pt, {
+        draggable: true,
+        zIndexOffset: 1500,
+        icon: L.divIcon({
+          className: `sketch-handle ${isEnd ? "sketch-handle--end" : ""}`,
+          html: label,
+          iconSize: isEnd ? [26, 26] : [38, 22],
+          iconAnchor: isEnd ? [13, 13] : [19, 11],
+        }),
+      });
+      const report = () => {
+        line.setLatLngs(markers.map((m) => m.getLatLng()));
+        // defer the React update out of Leaflet's drag-finish call chain
+        setTimeout(() => {
+          onSketchChangeRef.current(markers.map((m) => [m.getLatLng().lat, m.getLatLng().lng]));
+        }, 0);
+      };
+      marker.on("drag", () => line.setLatLngs(markers.map((m) => m.getLatLng())));
+      marker.on("dragend", report);
+      marker.addTo(group);
+      return marker;
+    });
+
+    group.addTo(map);
+    sketchLayerRef.current = group;
+  }, [sketchMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // User GPS marker + accuracy circle
   useEffect(() => {
