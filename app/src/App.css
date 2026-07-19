@@ -1439,6 +1439,74 @@ body {
 .offline__auto { margin-bottom: 0.45rem; }
 .offline__note { font-size: 0.62rem; color: #64748b; line-height: 1.5; }
 
+/* ---------- Whole-trip condensed print ---------- */
+.trip-stats__print {
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #0ea5e988;
+  background: #0ea5e922;
+  color: var(--glow);
+  cursor: pointer;
+}
+.trip-stats__print:hover { background: #0ea5e933; }
+
+.print-sheet--trip { font-size: 9pt; }
+.print-sketch--trip { margin-bottom: 0.4rem; }
+.print-tripline { font-size: 8pt; color: #334155; line-height: 1.6; margin-bottom: 0.6rem; }
+.print-legs-heading { break-before: page; }
+.print-legrow {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.42rem 0;
+  break-inside: avoid;
+}
+.print-legrow__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.print-legrow__title { font-size: 9.5pt; font-weight: 700; color: #0f172a; }
+.print-legrow__meta { font-size: 8pt; font-weight: 700; color: #0369a1; white-space: nowrap; }
+.print-legrow__desc { font-size: 8pt; color: #334155; line-height: 1.4; margin: 0.12rem 0; }
+.print-legrow__stops { font-size: 7.5pt; color: #475569; line-height: 1.5; }
+.print-legrow__stops strong { color: #1e293b; }
+.print-legrow__tip { font-size: 7pt; color: #94a3b8; font-style: italic; margin-top: 0.1rem; }
+
+.print-crib-heading { break-before: page; }
+.print-crib {
+  columns: 2;
+  column-gap: 8mm;
+  font-size: 8pt;
+}
+.print-crib__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.12rem 0;
+  border-bottom: 1px dotted #e2e8f0;
+  break-inside: avoid;
+}
+.print-crib__n {
+  flex-shrink: 0;
+  width: 18px;
+  font-size: 7pt;
+  font-weight: 700;
+  color: #0369a1;
+}
+.print-crib__name { flex: 1; min-width: 0; color: #1e293b; }
+.print-crib-sub {
+  font-size: 9pt;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0.7rem 0 0.3rem;
+}
+.print-crib--optional .print-crib__name { color: #64748b; }
+
 /* ---------- Print / PDF sheet ---------- */
 .print-overlay {
   position: fixed;

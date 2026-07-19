@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import MapView, { BASE_LAYERS } from "./components/MapView";
 import PrintMyRoute from "./components/PrintMyRoute";
+import PrintTrip from "./components/PrintTrip";
 import LegCard from "./components/LegCard";
 import DetailModal from "./components/DetailModal";
 import PrintLeg from "./components/PrintLeg";
@@ -65,6 +66,7 @@ export default function App() {
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
   const [printMyRoute, setPrintMyRoute] = useState(false);
+  const [printTrip, setPrintTrip] = useState(false);
   const [syncOpen, setSyncOpen] = useState(false);
   const [tripName, setTripName] = useState("Road Trip");
   const [editingName, setEditingName] = useState(false);
@@ -385,9 +387,10 @@ export default function App() {
           </button>
           {aboutOpen && (
             <p className="sidebar__blurb">
-              Ancient Salt Roads and medieval trade corridors in 15 short legs — every one
-              verified at two hours' driving or less (one long haul at 2h15). Superchargers,
-              YHA overnights, castles, abbeys and stone circles built into the flow.
+              Ancient Salt Roads and medieval trade corridors in 12 legs — every one verified
+              at ~2 hours' driving or less (the longest, into Exmoor, sits at 2h15).
+              Superchargers, YHA overnights, castles, abbeys and stone circles built into
+              the flow.
             </p>
           )}
 
@@ -662,6 +665,9 @@ export default function App() {
                 <div className="trip-stats__row">
                   🗺 {tripStats.counties} counties &amp; council areas crossed
                 </div>
+                <button className="trip-stats__print" onClick={() => setPrintTrip(true)}>
+                  🖨 Print whole trip — condensed A4 (4 pages)
+                </button>
               </div>
             )}
           </>
@@ -864,6 +870,15 @@ export default function App() {
           route={routes[`leg${printLeg.id}`]}
           postcodes={postcodes}
           onDone={closePrint}
+        />
+      )}
+
+      {printTrip && (
+        <PrintTrip
+          routes={routes}
+          postcodes={postcodes}
+          tripStats={tripStats}
+          onDone={() => setPrintTrip(false)}
         />
       )}
 

@@ -16,7 +16,7 @@ single-file prototype in `original/`.
 | Path | What |
 |---|---|
 | `app/` | Vite + React + Leaflet app (plain JS, no TS) |
-| `app/src/data/routeData.js` | 15 legs (each OSRM-verified ≤2h15m driving), 40 main waypoints |
+| `app/src/data/routeData.js` | 12 legs (fewest possible under the 2h+15m rule; each OSRM-verified), 40 main waypoints |
 | `app/src/data/optionalSites.js` | 14 optional POIs (grey markers), Nominatim-verified coords |
 | `app/src/lib/router.js` | Routing with motorway preference: OSRM ("yes") / FOSSGIS Valhalla use_highways ("sometimes"/"no") |
 | `app/src/data/venueDetails.json` | Baked Wikipedia summaries/images + OSM addresses for all 54 POIs |
