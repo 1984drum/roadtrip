@@ -37,6 +37,8 @@ export default function MapView({
   showExtras,
   selectedLegId,
   routes,
+  ratings,
+  customRoute,
   userPosition,
   follow,
   focusRequest, // {lat, lng, wpId, ts} — imperative "fly here" signal from the sidebar
@@ -47,6 +49,7 @@ export default function MapView({
   const markersRef = useRef([]);
   const linesRef = useRef([]);
   const userLayerRef = useRef(null);
+  const customLayerRef = useRef(null);
   const onOpenDetailRef = useRef(onOpenDetail);
   onOpenDetailRef.current = onOpenDetail;
 
@@ -86,7 +89,7 @@ export default function MapView({
       const line = L.polyline(latlngs, {
         color: leg.direction === "Outbound" ? "#0ea5e9" : "#38bdf8",
         weight: isSelected ? 6 : 4,
-        opacity: selectedLegId && !isSelected ? 0.35 : 0.85,
+        opacity: customRoute ? 0.2 : selectedLegId && !isSelected ? 0.35 : 0.85,
         dashArray: osrm ? null : "6 8", // dashed = fallback straight line
         lineCap: "round",
         lineJoin: "round",
@@ -104,7 +107,43 @@ export default function MapView({
 
       linesRef.current.push(hitLine, line);
     });
-  }, [routes, selectedLegId]);
+  }, [routes, selectedLegId, customRoute]);
+
+  // Personalised top-rated route: gold line + numbered stop badges
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (customLayerRef.current) {
+      map.removeLayer(customLayerRef.current);
+      customLayerRef.current = null;
+    }
+    if (!customRoute) return;
+
+    const group = L.layerGroup();
+    L.polyline(customRoute.line, {
+      color: "#f59e0b",
+      weight: 5,
+      opacity: 0.95,
+      lineCap: "round",
+      lineJoin: "round",
+    }).addTo(group);
+    customRoute.stops.forEach((s, i) => {
+      if (i === 0 || i === customRoute.stops.length - 1) return; // Macclesfield endpoints
+      L.marker([s.lat, s.lng], {
+        icon: L.divIcon({
+          className: "custom-route-num",
+          html: `${i}`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        }),
+        interactive: false,
+        zIndexOffset: 600,
+      }).addTo(group);
+    });
+    group.addTo(map);
+    customLayerRef.current = group;
+    map.flyToBounds(L.latLngBounds(customRoute.line), { padding: [50, 50], duration: 1.2 });
+  }, [customRoute]);
 
   // Markers: main waypoints + optional grey sites. Tap opens the detail modal.
   useEffect(() => {
@@ -118,7 +157,12 @@ export default function MapView({
         icon: createCustomIcon(wp.type, wp.kind),
         zIndexOffset: wp.type === "optional" ? -100 : 0,
       });
-      marker.bindTooltip(wp.name, { direction: "top", offset: [0, -14], opacity: 0.9 });
+      const rating = ratings?.[wp.id];
+      marker.bindTooltip(rating ? `${wp.name} · ★${rating}` : wp.name, {
+        direction: "top",
+        offset: [0, -14],
+        opacity: 0.9,
+      });
       marker.on("click", () => onOpenDetailRef.current(wp));
       marker.wpId = wp.id;
       marker.addTo(map);
@@ -139,7 +183,7 @@ export default function MapView({
         addMarker(wp);
       });
     }
-  }, [filter, showExtras]);
+  }, [filter, showExtras, ratings]);
 
   // Fly to selected leg
   useEffect(() => {

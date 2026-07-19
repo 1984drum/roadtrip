@@ -6,7 +6,9 @@ import PrintLeg from "./components/PrintLeg";
 import { routeData, allWaypoints } from "./data/routeData";
 import { useRoutes } from "./hooks/useRoutes";
 import { usePostcodes } from "./hooks/usePostcodes";
+import { useRatings } from "./hooks/useRatings";
 import { useGeolocation, distanceM, formatDistance } from "./hooks/useGeolocation";
+import { buildStopList, fetchCustomRoute } from "./lib/customRoute";
 import "./App.css";
 
 const FILTERS = [
@@ -31,6 +33,12 @@ export default function App() {
   const [aboutOpen, setAboutOpen] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [collapsedLegs, setCollapsedLegs] = useState(() => new Set());
+  const [myRouteOpen, setMyRouteOpen] = useState(false);
+  const [minRating, setMinRating] = useState(7);
+  const [includeChargers, setIncludeChargers] = useState(true);
+  const [customRoute, setCustomRoute] = useState(null);
+  const [routeBuilding, setRouteBuilding] = useState(false);
+  const [routeError, setRouteError] = useState(null);
 
   const toggleLegCollapse = (id) =>
     setCollapsedLegs((prev) => {
@@ -42,7 +50,31 @@ export default function App() {
 
   const { routes, loading: routesLoading, error: routesError } = useRoutes();
   const postcodes = usePostcodes();
+  const { ratings, setRating } = useRatings();
   const gps = useGeolocation();
+
+  const ratedCount = Object.keys(ratings).length;
+  const qualifyingCount = useMemo(
+    () => Object.values(ratings).filter((r) => r >= minRating).length,
+    [ratings, minRating]
+  );
+
+  const buildMyRoute = async () => {
+    setRouteError(null);
+    const stops = buildStopList(ratings, minRating, includeChargers);
+    if (!stops) {
+      setRouteError(`No places rated ${minRating}+ yet — rate some stops first (tap a marker).`);
+      return;
+    }
+    setRouteBuilding(true);
+    try {
+      setCustomRoute(await fetchCustomRoute(stops));
+    } catch {
+      setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
+    } finally {
+      setRouteBuilding(false);
+    }
+  };
 
   const nearest = useMemo(() => {
     if (!gps.position) return null;
@@ -126,6 +158,76 @@ export default function App() {
               </button>
             </div>
           )}
+          <button className="section-toggle" onClick={() => setMyRouteOpen((v) => !v)}>
+            <span>★ My Route{customRoute ? " (active)" : ""}</span>
+            <span className="section-chevron">{myRouteOpen ? "▾" : "▸"}</span>
+          </button>
+          {myRouteOpen && (
+            <div className="myroute">
+              <p className="myroute__blurb">
+                Rate places out of 10 (tap any marker), then build a personalised loop from
+                Macclesfield through your favourites. {ratedCount} rated so far.
+              </p>
+              <div className="myroute__controls">
+                <label className="myroute__label">
+                  Include places rated
+                  <select
+                    className="myroute__select"
+                    value={minRating}
+                    onChange={(e) => setMinRating(Number(e.target.value))}
+                  >
+                    {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map((n) => (
+                      <option key={n} value={n}>
+                        {n}+
+                      </option>
+                    ))}
+                  </select>
+                  <span className="myroute__count">({qualifyingCount} qualify)</span>
+                </label>
+                <label className="myroute__label myroute__label--check">
+                  <input
+                    type="checkbox"
+                    checked={includeChargers}
+                    onChange={(e) => setIncludeChargers(e.target.checked)}
+                  />
+                  Always include Superchargers
+                </label>
+              </div>
+              <div className="myroute__actions">
+                <button className="myroute__build" onClick={buildMyRoute} disabled={routeBuilding}>
+                  {routeBuilding ? "Routing…" : customRoute ? "Rebuild route" : "Build my route"}
+                </button>
+                {customRoute && (
+                  <button className="myroute__clear" onClick={() => setCustomRoute(null)}>
+                    Clear
+                  </button>
+                )}
+              </div>
+              {routeError && <p className="route-status route-status--warn">{routeError}</p>}
+              {customRoute && (
+                <div className="myroute__result">
+                  <p className="myroute__stats">
+                    {customRoute.stops.length - 2} stops ·{" "}
+                    {(customRoute.distanceM / 1609.344).toFixed(0)} mi ·{" "}
+                    {Math.floor(customRoute.durationS / 3600)}h{" "}
+                    {Math.round((customRoute.durationS % 3600) / 60)}m driving
+                  </p>
+                  <ol className="myroute__list">
+                    {customRoute.stops.slice(1, -1).map((s) => (
+                      <li key={s.id} onClick={() => focusWaypoint(s)}>
+                        <span className="myroute__stop-name">{s.name}</span>
+                        <span className="myroute__stop-meta">
+                          {ratings[s.id] ? `★${ratings[s.id]}` : s.type === "charger" ? "⚡" : ""}
+                          {postcodes[s.id] ? ` · ${postcodes[s.id].postcode}` : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
+
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}
         </header>
@@ -137,6 +239,7 @@ export default function App() {
               leg={leg}
               route={routes[`leg${leg.id}`]}
               postcodes={postcodes}
+              ratings={ratings}
               selected={selectedLegId === leg.id}
               collapsed={collapsedLegs.has(leg.id)}
               onToggleCollapse={toggleLegCollapse}
@@ -157,6 +260,8 @@ export default function App() {
           showExtras={showExtras}
           selectedLegId={selectedLegId}
           routes={routes}
+          ratings={ratings}
+          customRoute={customRoute}
           userPosition={gps.tracking ? gps.position : null}
           follow={follow}
           focusRequest={focusRequest}
@@ -228,11 +333,18 @@ export default function App() {
           <div><i className="dot dot--stay" /> Historic Lodging (YHA)</div>
           <div><i className="dot dot--charger" /> Tesla Supercharger</div>
           <div><i className="dot dot--optional" /> Optional Sites & Pubs</div>
+          {customRoute && <div><i className="dot dot--myroute" /> My Top-Rated Route</div>}
         </div>
       </main>
 
       {detailWp && (
-        <DetailModal wp={detailWp} postcode={postcodes[detailWp.id]} onClose={() => setDetailWp(null)} />
+        <DetailModal
+          wp={detailWp}
+          postcode={postcodes[detailWp.id]}
+          rating={ratings[detailWp.id] || 0}
+          onRate={setRating}
+          onClose={() => setDetailWp(null)}
+        />
       )}
 
       {printLeg && (

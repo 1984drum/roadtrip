@@ -15,6 +15,7 @@ export default function LegCard({
   leg,
   route,
   postcodes,
+  ratings,
   selected,
   collapsed,
   onToggleCollapse,
@@ -104,6 +105,7 @@ export default function LegCard({
                   <p className="wp-desc">{wp.desc}</p>
                   <p className="wp-meta">
                     <span className={`wp-type type-${wp.type}`}>{typeLabels[wp.type]}</span>
+                    {ratings?.[wp.id] && <span className="wp-rating">★ {ratings[wp.id]}</span>}
                     {pc && (
                       <button
                         className="wp-postcode"

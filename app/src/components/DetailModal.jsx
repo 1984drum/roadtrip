@@ -12,7 +12,7 @@ export function poiLabel(wp) {
   return typeLabels[wp.type] || "Waypoint";
 }
 
-export default function DetailModal({ wp, postcode, onClose }) {
+export default function DetailModal({ wp, postcode, rating, onRate, onClose }) {
   const { details, loading } = useVenueDetails(wp);
   const [shareState, setShareState] = useState(null);
 
@@ -82,6 +82,24 @@ export default function DetailModal({ wp, postcode, onClose }) {
           </div>
 
           <p className="modal__desc">{wp.desc}</p>
+
+          <div className="modal__rating">
+            <span className="modal__rating-label">Your rating</span>
+            <div className="stars" role="radiogroup" aria-label="Rate this place out of 10">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  className={`star ${rating >= n ? "star--on" : ""}`}
+                  aria-label={`${n} out of 10`}
+                  title={`${n}/10${rating === n ? " — tap again to clear" : ""}`}
+                  onClick={() => onRate(wp.id, rating === n ? null : n)}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <span className="modal__rating-value">{rating ? `${rating}/10` : "not rated"}</span>
+          </div>
 
           {loading && <p className="modal__loading">Fetching details from Wikipedia &amp; OpenStreetMap…</p>}
 
