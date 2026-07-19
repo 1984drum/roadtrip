@@ -13,9 +13,9 @@ export const routeData = [
     desc: "Leaving the Cheshire Plain, you cross into the Welsh Marches via the A530/A49. Skip busy towns for Stokesay Castle, a fine 13th-century fortified manor house.",
     waypoints: [
       { id: "macc-start", name: "Macclesfield (Start)", lat: 53.259, lng: -2.127, type: "start", desc: "The industrial silk-weaving town.", wikiTitle: "Macclesfield", website: "https://visitcheshire.com" },
-      { id: "stokesay", name: "Stokesay Castle", lat: 52.435, lng: -2.83, type: "history", desc: "Finest preserved 13th-century fortified manor house in England.", website: "https://www.english-heritage.org.uk/visit/places/stokesay-castle/" },
+      { id: "stokesay", name: "Stokesay Castle", lat: 52.435, lng: -2.83, type: "history", desc: "Finest preserved 13th-century fortified manor house in England.", built: 1281, website: "https://www.english-heritage.org.uk/visit/places/stokesay-castle/" },
       { id: "ludlow-sc", name: "Ludlow Supercharger", lat: 52.373, lng: -2.718, type: "charger", desc: "Top up near Stokesay.", wikiTitle: "Ludlow", website: "https://www.tesla.com/en_GB/supercharger" },
-      { id: "yha-clun", name: "YHA Clun Mill", lat: 52.423, lng: -3.03, type: "stay", desc: "Restored 18th-century watermill tucked into a quiet historic valley.", wikiTitle: "Clun", website: "https://www.yha.org.uk/hostel/yha-clun-mill" },
+      { id: "yha-clun", name: "YHA Clun Mill", lat: 52.423, lng: -3.03, type: "stay", desc: "Restored 18th-century watermill tucked into a quiet historic valley.", built: 1750, wikiTitle: "Clun", website: "https://www.yha.org.uk/hostel/yha-clun-mill" },
     ],
     stopOrder: ["macc-start", "stokesay", "ludlow-sc", "yha-clun"],
   },
@@ -29,7 +29,7 @@ export const routeData = [
       "Early afternoon travel. The A417 'Missing Link' near Gloucester and Birdlip is a notorious bottleneck from 15:30 to 18:30.",
     desc: "Drive south through Hereford. Aim for the dramatic escarpment of Haresfield Beacon and the stark ruins of Hailes Abbey, sitting silently in a fold of the hills.",
     waypoints: [
-      { id: "hailes", name: "Hailes Abbey", lat: 51.966, lng: -1.923, type: "history", desc: "Former Cistercian monastery dissolved by Henry VIII.", website: "https://www.english-heritage.org.uk/visit/places/hailes-abbey/" },
+      { id: "hailes", name: "Hailes Abbey", lat: 51.966, lng: -1.923, type: "history", desc: "Former Cistercian monastery dissolved by Henry VIII.", built: 1246, website: "https://www.english-heritage.org.uk/visit/places/hailes-abbey/" },
       { id: "haresfield", name: "Haresfield Beacon", lat: 51.776, lng: -2.234, type: "nature", desc: "Spectacular sweeping views over the Severn Estuary.", website: "https://www.nationaltrust.org.uk/visit/gloucestershire-cotswolds/haresfield-beacon-and-standish-wood" },
       { id: "michaelwood-sc", name: "Dursley / Michaelwood SC", lat: 51.658, lng: -2.408, type: "charger", desc: "Supercharger positioned just off the route.", wikiTitle: "Michaelwood services", website: "https://www.tesla.com/en_GB/supercharger" },
       { id: "yha-slimbridge", name: "YHA Slimbridge", lat: 51.74, lng: -2.404, type: "stay", desc: "Nestled along the quiet lanes near the Berkeley Estate.", wikiTitle: "Slimbridge", website: "https://www.yha.org.uk" },
@@ -62,8 +62,8 @@ export const routeData = [
       "Arrive at West Kennet and Lacock either early morning or late afternoon to bypass peak commercial tourism hours.",
     desc: "Swing east tracking old monastic routes. Head to high chalk downs, visiting Lacock Abbey's medieval cloisters and the prehistoric West Kennet Long Barrow.",
     waypoints: [
-      { id: "lacock", name: "Lacock Abbey", lat: 51.414, lng: -2.116, type: "history", desc: "Preserved 13th-century village and monastic brewing house.", website: "https://www.nationaltrust.org.uk/visit/wiltshire/lacock" },
-      { id: "west-kennet", name: "West Kennet Long Barrow", lat: 51.408, lng: -1.85, type: "history", desc: "Massive Neolithic burial chamber, walk inside ancient stone cells.", website: "https://www.english-heritage.org.uk/visit/places/west-kennet-long-barrow/" },
+      { id: "lacock", name: "Lacock Abbey", lat: 51.414, lng: -2.116, type: "history", desc: "Preserved 13th-century village and monastic brewing house.", built: 1232, website: "https://www.nationaltrust.org.uk/visit/wiltshire/lacock" },
+      { id: "west-kennet", name: "West Kennet Long Barrow", lat: 51.408, lng: -1.85, type: "history", desc: "Massive Neolithic burial chamber, walk inside ancient stone cells.", built: -3650, website: "https://www.english-heritage.org.uk/visit/places/west-kennet-long-barrow/" },
       { id: "chippenham-sc", name: "Chippenham SC", lat: 51.472, lng: -2.138, type: "charger", desc: "Top up in Wiltshire.", wikiTitle: "Chippenham", website: "https://www.tesla.com/en_GB/supercharger" },
       { id: "yha-bath", name: "YHA Bath Mill", lat: 51.378, lng: -2.395, type: "stay", desc: "Tucked in a wooded valley on the Cotswold fringe.", wikiTitle: "Bath, Somerset", website: "https://www.yha.org.uk/hostel/yha-bath" },
     ],
@@ -79,9 +79,9 @@ export const routeData = [
       "Mid-day (11:00-14:00) or Sundays. Bypassing Birmingham via M5/M6 is highly susceptible to severe weekday commuter delays (07:00-09:30 & 16:00-18:30).",
     desc: "Push north up the spine of the country via historic backroads. Stop at Croxden Abbey, majestic 12th-century limestone ruins ignored by mainstream tourism.",
     waypoints: [
-      { id: "croxden", name: "Croxden Abbey", lat: 52.955, lng: -1.905, type: "history", desc: "Soaring 12th-century Cistercian abbey ruins.", website: "https://www.english-heritage.org.uk/visit/places/croxden-abbey/" },
+      { id: "croxden", name: "Croxden Abbey", lat: 52.955, lng: -1.905, type: "history", desc: "Soaring 12th-century Cistercian abbey ruins.", built: 1176, website: "https://www.english-heritage.org.uk/visit/places/croxden-abbey/" },
       { id: "uttoxeter-sc", name: "Uttoxeter SC", lat: 52.898, lng: -1.848, type: "charger", desc: "Perfectly positioned minutes from Croxden.", wikiTitle: "Uttoxeter", website: "https://www.tesla.com/en_GB/supercharger" },
-      { id: "yha-ilam", name: "YHA Ilam Hall", lat: 53.054, lng: -1.802, type: "stay", desc: "Gothic manor house at the entrance to Dovedale.", wikiTitle: "Ilam, Staffordshire", website: "https://www.yha.org.uk/hostel/yha-ilam-hall" },
+      { id: "yha-ilam", name: "YHA Ilam Hall", lat: 53.054, lng: -1.802, type: "stay", desc: "Gothic manor house at the entrance to Dovedale.", built: 1826, wikiTitle: "Ilam, Staffordshire", website: "https://www.yha.org.uk/hostel/yha-ilam-hall" },
     ],
     stopOrder: ["uttoxeter-sc", "croxden", "yha-ilam"],
   },

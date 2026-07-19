@@ -31,6 +31,7 @@ import {
   pointsAlongLine,
   makeSketchStops,
 } from "./lib/customRoute";
+import { computeTripStats } from "./lib/tripStats";
 
 const poiById = new Map(allPois.map((p) => [p.id, p]));
 import "./App.css";
@@ -64,7 +65,10 @@ export default function App() {
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
   const [printMyRoute, setPrintMyRoute] = useState(false);
   const [syncOpen, setSyncOpen] = useState(false);
-  const [saveName, setSaveName] = useState("");
+  const [tripName, setTripName] = useState("Road Trip");
+  const [editingName, setEditingName] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [statsOpen, setStatsOpen] = useState(false);
   const { savedRoutes, saveRoute, deleteRoute } = useSavedRoutes();
   const [syncCode, setSyncCodeState] = useState(getSyncCode);
   const [pulled, setPulled] = useState(false);
@@ -118,7 +122,8 @@ export default function App() {
     setRouteError(null);
     try {
       setCustomRoute(await fetchCustomRoute(stops));
-      if (name) setSaveName(name);
+      if (name) setTripName(name);
+      setDirty(false); // loaded trips are already saved
       setMyRouteOpen(true);
     } catch {
       setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
@@ -189,17 +194,23 @@ export default function App() {
   // Sketch mode: handles at 0/20/40/60/80/100% of the visible route
   const routesReady = routeData.every((l) => routes[`leg${l.id}`]);
 
-  // Whole-trip totals for the min/recommended days summary
-  const tripTotals = useMemo(() => {
-    if (!routesReady) return null;
-    const miles =
-      routeData.reduce((s, l) => s + routes[`leg${l.id}`].distanceM, 0) / 1609.344;
-    const driveH =
-      routeData.reduce((s, l) => s + routes[`leg${l.id}`].durationS, 0) / 3600;
-    // minimum: cap driving at ~5.5h/day and skip most stops
-    const minDays = Math.max(2, Math.ceil(driveH / 5.5));
-    return { miles, driveH, minDays, recMin: routeData.length, recMax: routeData.length + 2 };
-  }, [routesReady, routes]);
+  // Whole-trip stats: the summary strip numbers plus the fun ones
+  const tripStats = useMemo(
+    () => (routesReady ? computeTripStats(routes) : null),
+    [routesReady, routes]
+  );
+
+  const commitName = (value) => {
+    setTripName(value.trim() || "Road Trip");
+    setEditingName(false);
+    if (customRoute) setDirty(true);
+  };
+
+  const saveTrip = () => {
+    if (!customRoute) return;
+    saveRoute(tripName, customRoute, { minRating, includeChargers });
+    setDirty(false);
+  };
   const startSketch = () => {
     if (!routesReady) return;
     if (customRoute) {
@@ -227,7 +238,8 @@ export default function App() {
     setRouteError(null);
     try {
       setCustomRoute(await fetchCustomRoute(makeSketchStops(sketchPoints)));
-      setSaveName("Sketched route");
+      if (tripName === "Road Trip") setTripName("Sketched trip");
+      setDirty(true);
       setSketchMode(false);
       setSketchPoints(null);
       setMyRouteOpen(true);
@@ -238,11 +250,13 @@ export default function App() {
     }
   };
 
-  const applyPoints = async (points) => {
+  const applyPoints = async (points, name) => {
     setRouteBuilding(true);
     setRouteError(null);
     try {
       setCustomRoute(await fetchCustomRoute(makeSketchStops(points)));
+      if (name) setTripName(name);
+      setDirty(false);
       setMyRouteOpen(true);
     } catch {
       setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
@@ -261,6 +275,8 @@ export default function App() {
     setRouteBuilding(true);
     try {
       setCustomRoute(await fetchCustomRoute(stops));
+      if (tripName === "Road Trip") setTripName("Top-rated trip");
+      setDirty(true);
     } catch {
       setRouteError("Couldn't fetch the route from OSRM — try again in a moment.");
     } finally {
@@ -303,7 +319,46 @@ export default function App() {
 
         <header className="sidebar__header">
           <div className="header-top">
-            <h1>Road Trip</h1>
+            <div className="trip-title">
+              {editingName ? (
+                <input
+                  className="trip-title__input"
+                  autoFocus
+                  defaultValue={tripName}
+                  maxLength={40}
+                  onBlur={(e) => commitName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitName(e.target.value);
+                    if (e.key === "Escape") setEditingName(false);
+                  }}
+                />
+              ) : (
+                <>
+                  <h1>{tripName}</h1>
+                  <button
+                    className="trip-rename"
+                    title="Rename this trip"
+                    aria-label="Rename this trip"
+                    onClick={() => setEditingName(true)}
+                  >
+                    ✎
+                  </button>
+                </>
+              )}
+              {dirty && <span className="unsaved-tag">unsaved</span>}
+              <button
+                className="trip-save"
+                onClick={saveTrip}
+                disabled={!customRoute}
+                title={
+                  customRoute
+                    ? "Save this trip to your saved trips"
+                    : "Build or sketch a custom trip to save it — the classic loop is always here"
+                }
+              >
+                SAVE
+              </button>
+            </div>
             <button
               className="hide-sidebar-btn"
               title="Hide panel — full-screen map"
@@ -393,7 +448,14 @@ export default function App() {
                   {routeBuilding ? "Routing…" : customRoute ? "Rebuild route" : "Build my route"}
                 </button>
                 {customRoute && (
-                  <button className="myroute__clear" onClick={() => setCustomRoute(null)}>
+                  <button
+                    className="myroute__clear"
+                    onClick={() => {
+                      setCustomRoute(null);
+                      setTripName("Road Trip");
+                      setDirty(false);
+                    }}
+                  >
                     Clear
                   </button>
                 )}
@@ -421,23 +483,9 @@ export default function App() {
                       </li>
                     ))}
                   </ol>
-                  <div className="saveroute__row">
-                    <input
-                      className="saveroute__name"
-                      placeholder="Name this route…"
-                      value={saveName}
-                      onChange={(e) => setSaveName(e.target.value)}
-                    />
-                    <button
-                      className="saveroute__btn"
-                      onClick={() => {
-                        saveRoute(saveName, customRoute, { minRating, includeChargers });
-                        setSaveName("");
-                      }}
-                    >
-                      Save
-                    </button>
-                  </div>
+                  <p className="myroute__savehint">
+                    Rename and <strong>SAVE</strong> this trip from the panel header above.
+                  </p>
                 </div>
               )}
 
@@ -448,7 +496,7 @@ export default function App() {
                     <div key={r.id} className="savedlist__row">
                       <button
                         className="savedlist__load"
-                        onClick={() => (r.points ? applyPoints(r.points) : applyStopIds(r.stopIds))}
+                        onClick={() => (r.points ? applyPoints(r.points, r.name) : applyStopIds(r.stopIds, r.name))}
                       >
                         <span className="savedlist__name">{r.name}</span>
                         <span className="savedlist__meta">
@@ -508,20 +556,57 @@ export default function App() {
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}
         </header>
 
-        {tripTotals && (
-          <div
-            className="trip-summary"
-            title={`Minimum assumes up to ~5½ hours driving a day and skipping most stops. Recommended is one leg per day with proper time at the stops and the YHA overnights, plus a day or two to linger.`}
-          >
-            <span>
-              🚗 {tripTotals.miles.toFixed(0)} mi · {Math.floor(tripTotals.driveH)}h{" "}
-              {Math.round((tripTotals.driveH % 1) * 60)}m driving
-            </span>
-            <span className="trip-summary__days">
-              minimum <strong>{tripTotals.minDays} days</strong> · recommended{" "}
-              <strong>{tripTotals.recMin}–{tripTotals.recMax} days</strong>
-            </span>
-          </div>
+        {tripStats && (
+          <>
+            <button
+              className="trip-summary"
+              onClick={() => setStatsOpen((o) => !o)}
+              title={`Minimum assumes up to ~5½ hours driving a day and skipping most stops. Recommended is one leg per day with proper time at the stops and the YHA overnights, plus a day or two to linger. Click for more stats.`}
+            >
+              <span>
+                🚗 {tripStats.miles.toFixed(0)} mi · {Math.floor(tripStats.driveH)}h{" "}
+                {Math.round((tripStats.driveH % 1) * 60)}m driving
+              </span>
+              <span className="trip-summary__days">
+                minimum <strong>{tripStats.minDays} days</strong> · recommended{" "}
+                <strong>{tripStats.recMin}–{tripStats.recMax} days</strong>{" "}
+                <span className="trip-summary__chevron">{statsOpen ? "▾" : "▸"}</span>
+              </span>
+            </button>
+            {statsOpen && (
+              <div className="trip-stats">
+                <div className="trip-stats__row">
+                  ⚡ ~{Math.round(tripStats.kwh)} kWh across {tripStats.chargers} Supercharger
+                  stops · about {Math.round(tripStats.miles / tripStats.driveH)} mph average
+                </div>
+                <div className="trip-stats__row">
+                  🌱 ~{Math.round(tripStats.co2kg)} kg of tailpipe CO₂ a petrol car would have
+                  emitted
+                </div>
+                <div className="trip-stats__row">
+                  🏰 {tripStats.castles} castles · ⛪ {tripStats.abbeys} abbeys ·{" "}
+                  {tripStats.cathedrals} cathedrals · 🗿 {tripStats.prehistoric} prehistoric
+                  monuments
+                </div>
+                <div className="trip-stats__row">
+                  🍺 {tripStats.pubs} historic pubs · 🛏 {tripStats.stays} YHA nights · 🏞{" "}
+                  {tripStats.nature} wild landscapes · {tripStats.totalStops} possible stops in
+                  all
+                </div>
+                <div className="trip-stats__row">
+                  🕰 Combined age of every datable site:{" "}
+                  <strong>{tripStats.totalYears.toLocaleString()} years</strong>
+                </div>
+                <div className="trip-stats__row">
+                  👴 Oldest stop: {tripStats.oldestName} — humans here for ~
+                  {tripStats.oldestAge.toLocaleString()} years
+                </div>
+                <div className="trip-stats__row">
+                  🗺 {tripStats.counties} counties &amp; council areas crossed
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="legs-scroll">
@@ -610,8 +695,8 @@ export default function App() {
                     className="load-popover__item"
                     onClick={() => {
                       setLoadOpen(false);
-                      if (r.points) applyPoints(r.points);
-                      else applyStopIds(r.stopIds);
+                      if (r.points) applyPoints(r.points, r.name);
+                      else applyStopIds(r.stopIds, r.name);
                     }}
                   >
                     <span className="load-popover__name">{r.name}</span>
