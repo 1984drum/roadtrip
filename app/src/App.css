@@ -142,6 +142,68 @@ body {
 .filter-btn--active { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); }
 .filter-btn:hover { filter: brightness(1.25); }
 
+/* ---------- Planner spec controls ---------- */
+.planner {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  border-top: 1px solid #33415560;
+  padding: 0.55rem 0 0.1rem;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+.planner__item { display: flex; align-items: center; gap: 0.4rem; }
+.planner__select {
+  font: inherit;
+  font-size: 0.7rem;
+  text-transform: none;
+  letter-spacing: normal;
+  background: var(--bg-panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  padding: 0.2rem 0.3rem;
+}
+.planner__seg {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  overflow: hidden;
+}
+.planner__seg-btn {
+  font: inherit;
+  font-size: 0.62rem;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 0.28rem 0.55rem;
+  border: none;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.planner__seg-btn:last-child { border-right: none; }
+.planner__seg-btn--on { background: var(--electric); color: #fff; }
+
+/* ---------- Leg spec badges ---------- */
+.spec-badge {
+  font-size: 0.56rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0.3rem;
+  padding: 0.12rem 0.4rem;
+  margin-left: 0.45rem;
+  white-space: nowrap;
+}
+.spec-badge--ok { color: var(--nature); background: #10b98115; border: 1px solid #10b98144; }
+.spec-badge--grace { color: #fbbf24; background: #f59e0b15; border: 1px solid #f59e0b55; }
+.spec-badge--over { color: #f87171; background: #ef444415; border: 1px solid #ef444466; }
+.spec-badge--short { color: #94a3b8; background: #64748b15; border: 1px solid #64748b44; }
+
 .route-status {
   margin-top: 0.7rem;
   font-size: 0.68rem;

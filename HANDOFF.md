@@ -16,8 +16,9 @@ single-file prototype in `original/`.
 | Path | What |
 |---|---|
 | `app/` | Vite + React + Leaflet app (plain JS, no TS) |
-| `app/src/data/routeData.js` | 6 legs, 20 main waypoints, stop order for routing |
-| `app/src/data/optionalSites.js` | 34 optional POIs (grey markers), Nominatim-verified coords |
+| `app/src/data/routeData.js` | 15 legs (each OSRM-verified ≤2h15m driving), 40 main waypoints |
+| `app/src/data/optionalSites.js` | 14 optional POIs (grey markers), Nominatim-verified coords |
+| `app/src/lib/router.js` | Routing with motorway preference: OSRM ("yes") / FOSSGIS Valhalla use_highways ("sometimes"/"no") |
 | `app/src/data/venueDetails.json` | Baked Wikipedia summaries/images + OSM addresses for all 54 POIs |
 | `app/scripts/fetch-venue-details.mjs` | Re-bakes venueDetails.json — **run after changing any POI** |
 | `app/public/sw.js` | Hand-rolled service worker — **bump `VERSION` on breaking cache changes** |
@@ -89,10 +90,12 @@ Cloudflare Workers+KV free tier · Anthropic API (dormant).
 
 ## Known issues / next steps
 
-1. **Leg time estimates are stale** — the hand-written `stats`/
-   `estimatedTimeRange` in routeData.js are optimistic vs real OSRM distances
-   (leg 1 says ~65 mi, actually 104 mi through the stops). Worth regenerating
-   from OSRM figures.
+1. ~~Leg time estimates stale~~ **Fixed 20 Jul 2026**: trip restructured into
+   15 legs, each verified against real OSRM driving times (≤2h + 15m grace;
+   only leg 7 sits at exactly 2h15). Planner header has min/max drive-time
+   spec selects (badges flag legs vs spec) and a motorways yes/sometimes/no
+   preference (Valhalla's B-road times run ~40-60% over OSRM's — treat "no"
+   mode times as pessimistic).
 2. **YHA Slimbridge & YHA Exford** hostel pages redirect to yha.org.uk home —
    the hostels may no longer operate. Verify before booking; replace stops if
    needed (then re-run fetch-venue-details + postcodes cache bump).

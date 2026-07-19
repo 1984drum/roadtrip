@@ -11,11 +11,24 @@ function osrmSummary(route) {
   return `${miles.toFixed(0)} mi · ${h ? `${h}h ` : ""}${m}m driving`;
 }
 
+function SpecBadge({ route, specMin, specMax }) {
+  if (!route) return null;
+  const mins = route.durationS / 60;
+  if (mins > specMax + 15)
+    return <span className="spec-badge spec-badge--over">{Math.round(mins - specMax)}m over spec</span>;
+  if (mins > specMax)
+    return <span className="spec-badge spec-badge--grace">+{Math.round(mins - specMax)}m grace</span>;
+  if (mins < specMin) return <span className="spec-badge spec-badge--short">short hop</span>;
+  return <span className="spec-badge spec-badge--ok">✓ in spec</span>;
+}
+
 export default function LegCard({
   leg,
   route,
   postcodes,
   ratings,
+  specMin,
+  specMax,
   selected,
   collapsed,
   onToggleCollapse,
@@ -50,7 +63,7 @@ export default function LegCard({
       <div className="leg-card__stats-row">
         <p className="leg-card__stats">
           {osrmSummary(route) || leg.stats}
-          {route && <span className="leg-card__stats-live"> · live route</span>}
+          <SpecBadge route={route} specMin={specMin} specMax={specMax} />
         </p>
         <button
           className="leg-print-btn"

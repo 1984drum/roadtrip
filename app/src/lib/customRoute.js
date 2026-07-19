@@ -4,6 +4,7 @@
 import { routeData, getWaypoint } from "../data/routeData";
 import { optionalSites } from "../data/optionalSites";
 import { distanceM } from "../hooks/useGeolocation";
+import { fetchDrivingRoute } from "./router";
 
 export const allPois = [
   ...routeData.flatMap((l) => l.waypoints),
@@ -109,18 +110,10 @@ export function makeSketchStops(points) {
   }));
 }
 
-export async function fetchCustomRoute(stops) {
-  const pairs = stops.map((s) => `${s.lng},${s.lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${pairs}?overview=full&geometries=geojson&steps=false`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`OSRM ${res.status}`);
-  const json = await res.json();
-  if (json.code !== "Ok" || !json.routes?.length) throw new Error("No route found");
-  const route = json.routes[0];
-  return {
-    stops,
-    line: route.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
-    distanceM: route.distance,
-    durationS: route.duration,
-  };
+export async function fetchCustomRoute(stops, motorwayMode = "yes") {
+  const route = await fetchDrivingRoute(
+    stops.map((s) => [s.lat, s.lng]),
+    motorwayMode
+  );
+  return { stops, ...route };
 }

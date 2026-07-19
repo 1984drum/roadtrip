@@ -32,10 +32,12 @@ export function computeTripStats(routes) {
     driveH,
     avgMph: miles / driveH,
     minDays: Math.max(2, Math.ceil(driveH / 5.5)),
-    recMin: routeData.length,
-    recMax: routeData.length + 2,
+    // recommended: two short legs a day with proper time at the stops
+    recMin: Math.ceil(routeData.length / 2),
+    recMax: Math.ceil(routeData.length / 2) + 2,
     kwh: miles * 0.27, // typical Model 3/Y consumption
     co2kg: miles * 0.25, // tailpipe CO2 a petrol car would emit
+    legs: routeData.length,
     castles: allPois.filter((p) => p.name.includes("Castle")).length,
     abbeys: allPois.filter((p) => p.name.includes("Abbey")).length,
     cathedrals: allPois.filter((p) => p.name.includes("Cathedral")).length,

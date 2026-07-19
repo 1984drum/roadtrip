@@ -32,6 +32,7 @@ import {
   makeSketchStops,
 } from "./lib/customRoute";
 import { computeTripStats } from "./lib/tripStats";
+import { MOTORWAY_MODES, getMotorwayMode, setMotorwayMode } from "./lib/router";
 
 const poiById = new Map(allPois.map((p) => [p.id, p]));
 import "./App.css";
@@ -74,6 +75,15 @@ export default function App() {
   const [pulled, setPulled] = useState(false);
   const [sketchMode, setSketchMode] = useState(false);
   const [sketchPoints, setSketchPoints] = useState(null);
+  const [motorways, setMotorways] = useState(getMotorwayMode);
+  // drive-time spec (minutes per leg) — the planner's design rule
+  const [specMin, setSpecMin] = useState(() => Number(localStorage.getItem("roadtrip.specmin.v1")) || 45);
+  const [specMax, setSpecMax] = useState(() => Number(localStorage.getItem("roadtrip.specmax.v1")) || 120);
+
+  const switchMotorways = (mode) => {
+    setMotorways(mode);
+    setMotorwayMode(mode);
+  };
   const [baseLayer, setBaseLayer] = useState(
     () => localStorage.getItem("roadtrip.baselayer.v1") || "colour"
   );
@@ -96,7 +106,7 @@ export default function App() {
       return next;
     });
 
-  const { routes, loading: routesLoading, error: routesError } = useRoutes();
+  const { routes, loading: routesLoading, error: routesError } = useRoutes(motorways);
   const postcodes = usePostcodes();
   const { ratings, setRating } = useRatings();
   const gps = useGeolocation();
@@ -121,7 +131,7 @@ export default function App() {
     setRouteBuilding(true);
     setRouteError(null);
     try {
-      setCustomRoute(await fetchCustomRoute(stops));
+      setCustomRoute(await fetchCustomRoute(stops, motorways));
       if (name) setTripName(name);
       setDirty(false); // loaded trips are already saved
       setMyRouteOpen(true);
@@ -237,7 +247,7 @@ export default function App() {
     setRouteBuilding(true);
     setRouteError(null);
     try {
-      setCustomRoute(await fetchCustomRoute(makeSketchStops(sketchPoints)));
+      setCustomRoute(await fetchCustomRoute(makeSketchStops(sketchPoints), motorways));
       if (tripName === "Road Trip") setTripName("Sketched trip");
       setDirty(true);
       setSketchMode(false);
@@ -254,7 +264,7 @@ export default function App() {
     setRouteBuilding(true);
     setRouteError(null);
     try {
-      setCustomRoute(await fetchCustomRoute(makeSketchStops(points)));
+      setCustomRoute(await fetchCustomRoute(makeSketchStops(points), motorways));
       if (name) setTripName(name);
       setDirty(false);
       setMyRouteOpen(true);
@@ -274,7 +284,7 @@ export default function App() {
     }
     setRouteBuilding(true);
     try {
-      setCustomRoute(await fetchCustomRoute(stops));
+      setCustomRoute(await fetchCustomRoute(stops, motorways));
       if (tripName === "Road Trip") setTripName("Top-rated trip");
       setDirty(true);
     } catch {
@@ -375,9 +385,9 @@ export default function App() {
           </button>
           {aboutOpen && (
             <p className="sidebar__blurb">
-              Ancient Salt Roads and medieval trade corridors in 1.5–2 hour driving blocks,
-              avoiding motorways where the landscape deserves better. Superchargers and YHA
-              stops built into every leg.
+              Ancient Salt Roads and medieval trade corridors in 15 short legs — every one
+              verified at two hours' driving or less (one long haul at 2h15). Superchargers,
+              YHA overnights, castles, abbeys and stone circles built into the flow.
             </p>
           )}
 
@@ -552,6 +562,54 @@ export default function App() {
             <SyncPanel syncCode={syncCode} onEnable={enableSync} onDisable={disableSyncHere} />
           )}
 
+          {/* Planner spec — always visible so the drive-time rule stays front of mind */}
+          <div className="planner">
+            <label className="planner__item" title="Legs shorter than this get flagged as short hops">
+              Min drive
+              <select
+                className="planner__select"
+                value={specMin}
+                onChange={(e) => {
+                  setSpecMin(Number(e.target.value));
+                  localStorage.setItem("roadtrip.specmin.v1", e.target.value);
+                }}
+              >
+                {[30, 45, 60, 75, 90].map((m) => (
+                  <option key={m} value={m}>{m}m</option>
+                ))}
+              </select>
+            </label>
+            <label className="planner__item" title="Legs beyond this (+15m grace) get flagged as over spec">
+              Max drive
+              <select
+                className="planner__select"
+                value={specMax}
+                onChange={(e) => {
+                  setSpecMax(Number(e.target.value));
+                  localStorage.setItem("roadtrip.specmax.v1", e.target.value);
+                }}
+              >
+                {[90, 105, 120, 135, 150, 180].map((m) => (
+                  <option key={m} value={m}>{m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}` : `${m}m`}</option>
+                ))}
+              </select>
+            </label>
+            <div className="planner__item planner__item--motorways" title="Yes = fastest roads. Sometimes = motorways only when they earn their keep. No = A-roads and lanes (slower, prettier).">
+              Motorways
+              <div className="planner__seg">
+                {MOTORWAY_MODES.map((m) => (
+                  <button
+                    key={m.key}
+                    className={`planner__seg-btn ${motorways === m.key ? "planner__seg-btn--on" : ""}`}
+                    onClick={() => switchMotorways(m.key)}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}
         </header>
@@ -617,6 +675,8 @@ export default function App() {
               route={routes[`leg${leg.id}`]}
               postcodes={postcodes}
               ratings={ratings}
+              specMin={specMin}
+              specMax={specMax}
               selected={selectedLegId === leg.id}
               collapsed={collapsedLegs.has(leg.id)}
               onToggleCollapse={toggleLegCollapse}

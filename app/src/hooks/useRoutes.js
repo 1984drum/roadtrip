@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { routeData, legRoutingCoords } from "../data/routeData";
+import { fetchDrivingRoute } from "../lib/router";
 
-const CACHE_KEY = "roadtrip.osrm.v1";
+const CACHE_KEY = "roadtrip.routes.v3"; // bumped: 15-leg structure + motorway modes
 
 function loadCache() {
   try {
@@ -19,48 +20,37 @@ function saveCache(cache) {
   }
 }
 
-async function fetchLegRoute(coords) {
-  // OSRM wants lng,lat pairs
-  const pairs = coords.map(([lat, lng]) => `${lng},${lat}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${pairs}?overview=full&geometries=geojson&steps=false`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`OSRM ${res.status}`);
-  const json = await res.json();
-  if (json.code !== "Ok" || !json.routes?.length) throw new Error("No route");
-  const route = json.routes[0];
-  return {
-    // back to [lat, lng] for Leaflet
-    line: route.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
-    distanceM: route.distance,
-    durationS: route.duration,
-  };
-}
-
 /**
- * Fetches real road geometry for every leg from the public OSRM server,
- * cached in localStorage. Returns { routes: {legId: {line, distanceM, durationS}}, loading, error }.
+ * Fetches real road geometry for every leg (honouring the motorway
+ * preference), cached in localStorage per mode.
+ * Returns { routes: {legId: {line, distanceM, durationS}}, loading, error }.
  */
-export function useRoutes() {
+export function useRoutes(motorwayMode) {
   const [routes, setRoutes] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
+    setRoutes({});
+    setLoading(true);
+    setError(null);
     (async () => {
       const cache = loadCache();
       const result = {};
       let failed = 0;
 
       for (const leg of routeData) {
+        if (cancelled) return;
         const coords = legRoutingCoords(leg);
-        const key = `leg${leg.id}:${coords.map((c) => c.join(",")).join(";")}`;
+        const key = `${motorwayMode}:leg${leg.id}:${coords.map((c) => c.join(",")).join(";")}`;
         if (cache[key]) {
           result[`leg${leg.id}`] = cache[key];
+          setRoutes((r) => ({ ...r, [`leg${leg.id}`]: cache[key] }));
           continue;
         }
         try {
-          const route = await fetchLegRoute(coords);
+          const route = await fetchDrivingRoute(coords, motorwayMode);
           cache[key] = route;
           result[`leg${leg.id}`] = route;
           if (!cancelled) setRoutes((r) => ({ ...r, [`leg${leg.id}`]: route }));
@@ -79,7 +69,7 @@ export function useRoutes() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [motorwayMode]);
 
   return { routes, loading, error };
 }
