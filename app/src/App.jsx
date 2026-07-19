@@ -3,6 +3,7 @@ import MapView from "./components/MapView";
 import LegCard from "./components/LegCard";
 import DetailModal from "./components/DetailModal";
 import PrintLeg from "./components/PrintLeg";
+import OfflinePanel from "./components/OfflinePanel";
 import { routeData, allWaypoints } from "./data/routeData";
 import { useRoutes } from "./hooks/useRoutes";
 import { usePostcodes } from "./hooks/usePostcodes";
@@ -34,6 +35,8 @@ export default function App() {
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [collapsedLegs, setCollapsedLegs] = useState(() => new Set());
   const [myRouteOpen, setMyRouteOpen] = useState(false);
+  const [offlineOpen, setOfflineOpen] = useState(false);
+  const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
   const [minRating, setMinRating] = useState(7);
   const [includeChargers, setIncludeChargers] = useState(true);
   const [customRoute, setCustomRoute] = useState(null);
@@ -227,6 +230,19 @@ export default function App() {
               )}
             </div>
           )}
+
+          <button className="section-toggle" onClick={() => setOfflineOpen((v) => !v)}>
+            <span>
+              Offline maps
+              {offlineStatus === "downloading" && " (downloading…)"}
+              {offlineStatus === "ready" && " ✓"}
+            </span>
+            <span className="section-chevron">{offlineOpen ? "▾" : "▸"}</span>
+          </button>
+          {/* stays mounted so auto-download runs with the section collapsed */}
+          <div style={{ display: offlineOpen ? "block" : "none" }}>
+            <OfflinePanel routes={routes} onStatus={setOfflineStatus} />
+          </div>
 
           {routesLoading && <p className="route-status">Fetching real road routes…</p>}
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}

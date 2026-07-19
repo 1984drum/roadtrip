@@ -802,6 +802,48 @@ body {
 }
 .dot--myroute { background: #f59e0b; }
 
+/* ---------- Offline panel ---------- */
+.offline { padding: 0.2rem 0 0.6rem; }
+.offline__status { font-size: 0.68rem; color: var(--nature); margin-bottom: 0.5rem; }
+.offline__meta { font-size: 0.68rem; color: #fbbf24; margin-bottom: 0.5rem; }
+.offline__progress { margin-bottom: 0.55rem; }
+.offline__bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #0f172a;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.offline__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+  transition: width 0.3s ease;
+}
+.offline__progress-text { font-size: 0.64rem; color: var(--text-dim); margin-top: 0.3rem; }
+.offline__actions { display: flex; gap: 0.5rem; margin-bottom: 0.55rem; }
+.offline__btn {
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #0ea5e988;
+  background: #0ea5e922;
+  color: var(--glow);
+  cursor: pointer;
+}
+.offline__btn:hover:not(:disabled) { background: #0ea5e933; }
+.offline__btn:disabled { opacity: 0.55; cursor: default; }
+.offline__btn--secondary {
+  flex: 0 0 auto;
+  border-color: var(--border);
+  background: #33415555;
+  color: var(--text-dim);
+}
+.offline__auto { margin-bottom: 0.45rem; }
+.offline__note { font-size: 0.62rem; color: #64748b; line-height: 1.5; }
+
 /* ---------- Print / PDF sheet ---------- */
 .print-overlay {
   position: fixed;
