@@ -353,7 +353,19 @@ body {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 .leaflet-popup-tip { background: var(--bg-panel); border: 1px solid var(--border); }
-.leaflet-popup-close-button { color: var(--text-dim) !important; }
+.leaflet-container a.leaflet-popup-close-button {
+  width: 24px;
+  height: 24px;
+  top: 7px;
+  right: 7px;
+  border-radius: 50%;
+  background: #334155;
+  border: 1px solid #64748b;
+  color: #f8fafc !important;
+  font: 700 15px/22px sans-serif;
+  text-align: center;
+}
+.leaflet-container a.leaflet-popup-close-button:hover { background: #475569; color: #fff !important; }
 
 .popup-body h4 { font-size: 0.85rem; margin-bottom: 0.25rem; }
 .popup-body p { font-size: 0.7rem; color: #cbd5e1; line-height: 1.45; }
@@ -554,16 +566,18 @@ body {
   top: 0.6rem;
   right: 0.6rem;
   z-index: 10;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: rgba(15, 23, 42, 0.8);
-  color: var(--text);
-  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #64748b;
+  background: rgba(15, 23, 42, 0.9);
+  color: #fff;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
-.modal__close:hover { border-color: var(--glow); }
+.modal__close:hover { border-color: var(--glow); color: var(--glow); }
 
 .modal__hero {
   height: 190px;
@@ -862,10 +876,6 @@ body {
 .myroute__print:hover { background: #f59e0b30; }
 
 .print-route-fab {
-  position: absolute;
-  bottom: 24px;
-  left: 12px;
-  z-index: 800;
   font: inherit;
   font-size: 0.72rem;
   font-weight: 700;
@@ -880,26 +890,115 @@ body {
 }
 .print-route-fab:hover { background: #fbbf24; }
 
-/* ---------- Sketch mode ---------- */
-.sketch-fab {
+/* ---------- Trip summary strip ---------- */
+.trip-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+  background: #0f172a;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.66rem;
+  color: var(--text-dim);
+  cursor: help;
+}
+.trip-summary strong { color: #fbbf24; font-weight: 700; }
+.trip-summary__days { white-space: nowrap; }
+
+/* ---------- Hover cards (desktop) ---------- */
+.leaflet-tooltip.hover-card {
+  background: var(--bg-panel);
+  border: 1px solid #475569;
+  border-radius: 0.55rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+  padding: 0;
+  white-space: normal;
+}
+.hover-card__inner { padding: 0.55rem 0.7rem; max-width: 230px; }
+.hover-card__title { font-size: 0.76rem; font-weight: 700; color: var(--text); }
+.hover-card__rating { color: #f59e0b; }
+.hover-card__meta {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--glow);
+  margin: 0.15rem 0 0.25rem;
+}
+.hover-card__desc { font-size: 0.66rem; color: #cbd5e1; line-height: 1.45; }
+.hover-card__hint { font-size: 0.56rem; color: #64748b; margin-top: 0.3rem; font-style: italic; }
+.leaflet-tooltip.hover-card::before { display: none; }
+
+/* ---------- Trip action buttons ---------- */
+.trip-fabs {
   position: absolute;
-  bottom: 70px;
+  bottom: 24px;
   left: 12px;
   z-index: 800;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: flex-start;
+}
+.sketch-fab,
+.load-fab {
   font: inherit;
   font-size: 0.72rem;
   font-weight: 700;
   padding: 0.55rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid #f472b6;
-  background: rgba(30, 41, 59, 0.92);
-  color: #f9a8d4;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
 }
+.sketch-fab {
+  border: 1px solid #f472b6;
+  background: rgba(30, 41, 59, 0.92);
+  color: #f9a8d4;
+}
 .sketch-fab:hover:not(:disabled) { background: #f472b622; }
 .sketch-fab:disabled { opacity: 0.5; cursor: default; }
+.load-fab {
+  border: 1px solid var(--border);
+  background: rgba(30, 41, 59, 0.92);
+  color: var(--text);
+}
+.load-fab:hover { border-color: var(--glow); color: var(--glow); }
+
+.load-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 250px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  padding: 0.4rem;
+  scrollbar-width: thin;
+}
+.load-popover__empty { font-size: 0.66rem; color: var(--text-dim); padding: 0.4rem; line-height: 1.5; }
+.load-popover__item {
+  font: inherit;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  text-align: left;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.4rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.load-popover__item:hover { background: #33415560; }
+.load-popover__name { font-size: 0.74rem; font-weight: 600; }
+.load-popover__meta { font-size: 0.6rem; color: var(--text-dim); }
 
 .sketch-bar {
   position: absolute;
@@ -1383,8 +1482,9 @@ body {
   .layer-btn { border-bottom: none; border-right: 1px solid var(--border); }
   .layer-btn:last-child { border-right: none; }
 
-  .print-route-fab { bottom: 56px; left: 8px; font-size: 0.64rem; }
-  .sketch-fab { bottom: 100px; left: 8px; font-size: 0.64rem; }
+  .trip-fabs { bottom: 56px; left: 8px; }
+  .sketch-fab, .load-fab, .print-route-fab { font-size: 0.64rem; padding: 0.45rem 0.75rem; }
+  .print-route-fab { position: static; }
   .sketch-bar { top: 8px; flex-wrap: wrap; justify-content: center; border-radius: 0.8rem; }
   .sketch-bar__hint { white-space: normal; text-align: center; }
 }

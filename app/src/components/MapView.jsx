@@ -4,6 +4,32 @@ import "leaflet/dist/leaflet.css";
 import { routeData, legRoutingCoords } from "../data/routeData";
 import { optionalSites } from "../data/optionalSites";
 import { icons } from "../lib/icons";
+import { poiLabel } from "./DetailModal";
+
+// touch devices get tap → modal; instant hover cards are desktop-only
+const canHover =
+  typeof window !== "undefined" &&
+  window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+function hoverCardHtml(wp, pc, rating) {
+  return `<div class="hover-card__inner">
+    <div class="hover-card__title">${wp.name}${rating ? ` <span class="hover-card__rating">★${rating}</span>` : ""}</div>
+    <div class="hover-card__meta">${poiLabel(wp)}${pc ? ` · ${pc.postcode}` : ""}</div>
+    <div class="hover-card__desc">${wp.desc}</div>
+    <div class="hover-card__hint">Click for full details</div>
+  </div>`;
+}
+
+function legHoverHtml(leg, osrm) {
+  const miles = osrm ? `${(osrm.distanceM / 1609.344).toFixed(0)} mi` : leg.stats;
+  const mins = osrm ? Math.round(osrm.durationS / 60) : null;
+  const drive = mins ? `${Math.floor(mins / 60)}h ${mins % 60}m driving` : leg.estimatedTimeRange;
+  return `<div class="hover-card__inner">
+    <div class="hover-card__title">${leg.title}</div>
+    <div class="hover-card__meta">${leg.direction} · ${miles} · ${drive}</div>
+    <div class="hover-card__hint">Click to pin details</div>
+  </div>`;
+}
 
 export const BASE_LAYERS = {
   colour: {
@@ -77,6 +103,7 @@ export default function MapView({
   selectedLegId,
   routes,
   ratings,
+  postcodes,
   customRoute,
   baseLayer,
   sketchMode,
@@ -171,6 +198,13 @@ export default function MapView({
           .setContent(legLinePopupHtml(leg, osrm))
           .openOn(map);
       });
+      if (canHover) {
+        hitLine.bindTooltip(legHoverHtml(leg, osrm), {
+          sticky: true,
+          className: "hover-card",
+          opacity: 1,
+        });
+      }
 
       linesRef.current.push(hitLine, line);
     });
@@ -187,13 +221,21 @@ export default function MapView({
     if (!customRoute) return;
 
     const group = L.layerGroup();
-    L.polyline(customRoute.line, {
+    const goldLine = L.polyline(customRoute.line, {
       color: "#f59e0b",
       weight: 5,
       opacity: 0.95,
       lineCap: "round",
       lineJoin: "round",
     }).addTo(group);
+    if (canHover) {
+      const mi = (customRoute.distanceM / 1609.344).toFixed(0);
+      const mins = Math.round(customRoute.durationS / 60);
+      goldLine.bindTooltip(
+        `<div class="hover-card__inner"><div class="hover-card__title">My route</div><div class="hover-card__meta">${customRoute.stops.length - 2} stops · ${mi} mi · ${Math.floor(mins / 60)}h ${mins % 60}m driving</div></div>`,
+        { sticky: true, className: "hover-card", opacity: 1 }
+      );
+    }
     customRoute.stops.forEach((s, i) => {
       if (i === 0 || i === customRoute.stops.length - 1) return; // Macclesfield endpoints
       L.marker([s.lat, s.lng], {
@@ -225,11 +267,15 @@ export default function MapView({
         zIndexOffset: wp.type === "optional" ? -100 : 0,
       });
       const rating = ratings?.[wp.id];
-      marker.bindTooltip(rating ? `${wp.name} · ★${rating}` : wp.name, {
-        direction: "top",
-        offset: [0, -14],
-        opacity: 0.9,
-      });
+      if (canHover) {
+        // instant condensed card on hover — click still opens the full modal
+        marker.bindTooltip(hoverCardHtml(wp, postcodes?.[wp.id], rating), {
+          direction: "top",
+          offset: [0, -16],
+          opacity: 1,
+          className: "hover-card",
+        });
+      }
       marker.on("click", () => onOpenDetailRef.current(wp));
       marker.wpId = wp.id;
       marker.addTo(map);
@@ -250,7 +296,7 @@ export default function MapView({
         addMarker(wp);
       });
     }
-  }, [filter, showExtras, ratings]);
+  }, [filter, showExtras, ratings, postcodes]);
 
   // Fly to selected leg
   useEffect(() => {

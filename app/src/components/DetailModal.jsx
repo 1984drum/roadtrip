@@ -60,7 +60,7 @@ export default function DetailModal({ wp, postcode, rating, onRate, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button className="modal__close" onClick={onClose} aria-label="Close">
-          ✕
+          ✕ Close
         </button>
 
         {details?.wiki?.image ? (

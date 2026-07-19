@@ -50,13 +50,15 @@ export default function App() {
   const [focusRequest, setFocusRequest] = useState(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [follow, setFollow] = useState(true);
-  const [showExtras, setShowExtras] = useState(true);
+  const [showExtras, setShowExtras] = useState(false);
   const [detailWp, setDetailWp] = useState(null);
   const [printLegId, setPrintLegId] = useState(null);
   const [sidebarHidden, setSidebarHidden] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(true);
-  const [collapsedLegs, setCollapsedLegs] = useState(() => new Set());
+  // legs start collapsed for a zoomed-out overview of the whole trip
+  const [collapsedLegs, setCollapsedLegs] = useState(() => new Set(routeData.map((l) => l.id)));
+  const [loadOpen, setLoadOpen] = useState(false);
   const [myRouteOpen, setMyRouteOpen] = useState(false);
   const [offlineOpen, setOfflineOpen] = useState(false);
   const [offlineStatus, setOfflineStatus] = useState(null); // 'downloading' | 'ready' | null
@@ -166,6 +168,12 @@ export default function App() {
   }, [ratings, savedRoutes, syncCode, pulled]);
 
   const enableSync = () => {
+    if (
+      !window.confirm(
+        "Turn on auto-sync? Your ratings and saved routes will back up to a private cloud store, and the first sync may take a minute (including data used offline). Continue?"
+      )
+    )
+      return;
     const code = newSyncCode();
     setSyncCodeState(code);
     setPulled(true);
@@ -180,14 +188,32 @@ export default function App() {
 
   // Sketch mode: handles at 0/20/40/60/80/100% of the visible route
   const routesReady = routeData.every((l) => routes[`leg${l.id}`]);
+
+  // Whole-trip totals for the min/recommended days summary
+  const tripTotals = useMemo(() => {
+    if (!routesReady) return null;
+    const miles =
+      routeData.reduce((s, l) => s + routes[`leg${l.id}`].distanceM, 0) / 1609.344;
+    const driveH =
+      routeData.reduce((s, l) => s + routes[`leg${l.id}`].durationS, 0) / 3600;
+    // minimum: cap driving at ~5.5h/day and skip most stops
+    const minDays = Math.max(2, Math.ceil(driveH / 5.5));
+    return { miles, driveH, minDays, recMin: routeData.length, recMax: routeData.length + 2 };
+  }, [routesReady, routes]);
   const startSketch = () => {
-    const line =
-      customRoute?.line ||
-      (routesReady ? routeData.flatMap((l) => routes[`leg${l.id}`].line) : null);
-    if (!line) return;
+    if (!routesReady) return;
+    if (customRoute) {
+      const ok = window.confirm(
+        "Create a new trip? The route currently on the map will be discarded.\n\nIf you want to keep it, choose Cancel and save it first (★ My Route → Save)."
+      );
+      if (!ok) return;
+      setCustomRoute(null);
+    }
+    const line = routeData.flatMap((l) => routes[`leg${l.id}`].line);
     setSketchPoints(pointsAlongLine(line, [0, 0.2, 0.4, 0.6, 0.8, 1]));
     setSketchMode(true);
     setSheetOpen(false);
+    setLoadOpen(false);
   };
 
   const cancelSketch = () => {
@@ -310,7 +336,10 @@ export default function App() {
                 <button
                   key={f.key}
                   className={`filter-btn filter-btn--${f.key} ${filter === f.key ? "filter-btn--active" : ""}`}
-                  onClick={() => setFilter(f.key)}
+                  onClick={() => {
+                    setFilter(f.key);
+                    if (f.key === "pub") setShowExtras(true); // pubs are optional stops
+                  }}
                 >
                   {f.label}
                 </button>
@@ -320,7 +349,7 @@ export default function App() {
                 onClick={() => setShowExtras((v) => !v)}
                 title="Optional historic sites, viewpoints and pubs near the route"
               >
-                Extras {showExtras ? "on" : "off"}
+                Optional Stops
               </button>
             </div>
           )}
@@ -479,6 +508,22 @@ export default function App() {
           {routesError && <p className="route-status route-status--warn">{routesError}</p>}
         </header>
 
+        {tripTotals && (
+          <div
+            className="trip-summary"
+            title={`Minimum assumes up to ~5½ hours driving a day and skipping most stops. Recommended is one leg per day with proper time at the stops and the YHA overnights, plus a day or two to linger.`}
+          >
+            <span>
+              🚗 {tripTotals.miles.toFixed(0)} mi · {Math.floor(tripTotals.driveH)}h{" "}
+              {Math.round((tripTotals.driveH % 1) * 60)}m driving
+            </span>
+            <span className="trip-summary__days">
+              minimum <strong>{tripTotals.minDays} days</strong> · recommended{" "}
+              <strong>{tripTotals.recMin}–{tripTotals.recMax} days</strong>
+            </span>
+          </div>
+        )}
+
         <div className="legs-scroll">
           {routeData.map((leg) => (
             <LegCard
@@ -508,6 +553,7 @@ export default function App() {
           selectedLegId={selectedLegId}
           routes={routes}
           ratings={ratings}
+          postcodes={postcodes}
           customRoute={customRoute}
           baseLayer={baseLayer}
           sketchMode={sketchMode}
@@ -532,27 +578,55 @@ export default function App() {
           ))}
         </div>
 
-        {/* Quick print for the active custom route */}
-        {customRoute && !sketchMode && (
-          <button className="print-route-fab" onClick={() => setPrintMyRoute(true)}>
-            🖨 Print route
-          </button>
-        )}
-
-        {/* Sketch mode */}
+        {/* Trip actions: create / load / print */}
         {!sketchMode && (
-          <button
-            className="sketch-fab"
-            onClick={startSketch}
-            disabled={!routesReady && !customRoute}
-            title="Drag six handles to roughly reshape the loop, then build it into a real route"
-          >
-            ✏ Sketch route
-          </button>
+          <div className="trip-fabs">
+            <button
+              className="sketch-fab"
+              onClick={startSketch}
+              disabled={!routesReady}
+              title="Start a fresh trip: drag six handles into a rough loop, then build it into a real route"
+            >
+              ＋ Create new trip
+            </button>
+            <button className="load-fab" onClick={() => setLoadOpen((o) => !o)}>
+              📂 Load trip
+            </button>
+            {customRoute && (
+              <button className="print-route-fab" onClick={() => setPrintMyRoute(true)}>
+                🖨 Print route
+              </button>
+            )}
+            {loadOpen && (
+              <div className="load-popover">
+                {savedRoutes.length === 0 && (
+                  <p className="load-popover__empty">
+                    No saved trips yet — build or sketch a route, then Save it in ★ My Route.
+                  </p>
+                )}
+                {savedRoutes.map((r) => (
+                  <button
+                    key={r.id}
+                    className="load-popover__item"
+                    onClick={() => {
+                      setLoadOpen(false);
+                      if (r.points) applyPoints(r.points);
+                      else applyStopIds(r.stopIds);
+                    }}
+                  >
+                    <span className="load-popover__name">{r.name}</span>
+                    <span className="load-popover__meta">
+                      {(r.distanceM / 1609.344).toFixed(0)} mi · {r.date}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
         {sketchMode && (
           <div className="sketch-bar">
-            <span className="sketch-bar__hint">Drag the handles to reshape the loop</span>
+            <span className="sketch-bar__hint">New trip: drag the six handles into a rough loop</span>
             <button className="sketch-bar__build" onClick={buildFromSketch} disabled={routeBuilding}>
               {routeBuilding ? "Routing…" : "Build route"}
             </button>
