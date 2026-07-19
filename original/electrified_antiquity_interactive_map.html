@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrified Antiquity: Route Map</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            panel: '#1e293b',
+                            electric: '#0ea5e9',
+                            glow: '#38bdf8',
+                            historical: '#d97706',
+                            nature: '#10b981',
+                            stay: '#8b5cf6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow: hidden; /* Prevent body scroll, handle internally */
+        }
+        
+        /* Custom Scrollbar for sidebar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        /* Map styling overrides */
+        #map {
+            width: 100%;
+            height: 100%;
+            background-color: #0b0f19; /* Darker background behind tiles */
+        }
+        
+        /* Custom Map Markers */
+        .custom-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #0f172a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .custom-marker:hover {
+            transform: scale(1.15);
+            z-index: 1000 !important;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .marker-charger { background-color: #0ea5e9; color: #fff; }
+        .marker-history { background-color: #d97706; color: #fff; }
+        .marker-nature { background-color: #10b981; color: #fff; }
+        .marker-stay { background-color: #8b5cf6; color: #fff; }
+        .marker-start { background-color: #f1f5f9; color: #0f172a; }
+
+        /* Leaflet Popup Styling */
+        .leaflet-popup-content-wrapper {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        .leaflet-popup-tip {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+        .leaflet-popup-close-button {
+            color: #94a3b8 !important;
+        }
+        .leaflet-popup-close-button:hover {
+            color: #f8fafc !important;
+        }
+        
+        /* Electric Route Animation */
+        .electric-route {
+            stroke-dasharray: 10 10;
+            animation: dash 30s linear infinite;
+        }
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col md:flex-row font-sans text-slate-200">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-full md:w-[450px] lg:w-[500px] h-[50vh] md:h-screen flex-shrink-0 bg-brand-panel border-b md:border-b-0 md:border-r border-slate-700 flex flex-col relative z-20 shadow-2xl">
+        <!-- Header -->
+        <div class="p-6 border-b border-slate-700 bg-brand-dark sticky top-0 z-10">
+            <h1 class="text-2xl font-bold text-white mb-2 leading-tight tracking-tight">Electrified Antiquity</h1>
+            <h2 class="text-sm text-brand-electric font-medium mb-3 uppercase tracking-wider">Macclesfield to Devon Route</h2>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Tracking ancient Salt Roads and medieval trade corridors. Built for 1.5 to 2-hour driving blocks avoiding standard motorways, focusing on dramatic landscapes and crumbling medieval masonry. Adapted from the original reference (image_5cdb39.jpg).
+            </p>
+            
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-2 text-xs">
+                <button onclick="filterMarkers('all')" class="filter-btn active bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-full transition-colors border border-slate-500">All Stops</button>
+                <button onclick="filterMarkers('history')" class="filter-btn bg-brand-historical/20 text-brand-historical hover:bg-brand-historical/30 px-3 py-1.5 rounded-full transition-colors border border-brand-historical/50">Historical</button>
+                <button onclick="filterMarkers('nature')" class="filter-btn bg-brand-nature/20 text-brand-nature hover:bg-brand-nature/30 px-3 py-1.5 rounded-full transition-colors border border-brand-nature/50">Nature</button>
+                <button onclick="filterMarkers('charger')" class="filter-btn bg-brand-electric/20 text-brand-electric hover:bg-brand-electric/30 px-3 py-1.5 rounded-full transition-colors border border-brand-electric/50">Superchargers</button>
+                <button onclick="filterMarkers('stay')" class="filter-btn bg-brand-stay/20 text-brand-stay hover:bg-brand-stay/30 px-3 py-1.5 rounded-full transition-colors border border-brand-stay/50">Lodging</button>
+            </div>
+        </div>
+
+        <!-- Legs Container -->
+        <div id="legs-container" class="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </aside>
+
+    <!-- Map Container -->
+    <main class="flex-1 h-[50vh] md:h-screen relative z-10">
+        <div id="map"></div>
+        
+        <!-- Map Overlay UI (Legend) -->
+        <div class="absolute bottom-6 right-6 z-[1000] bg-brand-panel/90 backdrop-blur-sm p-4 rounded-xl border border-slate-700 shadow-xl hidden md:block">
+            <h3 class="text-xs font-semibold uppercase text-slate-400 mb-3 tracking-wider">Legend</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-full bg-slate-200"></div> <span>Start/End</span></div>
+                <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-full bg-brand-historical"></div> <span>Medieval Masonry</span></div>
+                <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-full bg-brand-nature"></div> <span>Rugged Landscape</span></div>
+                <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-full bg-brand-stay"></div> <span>Historic Lodging (YHA)</span></div>
+                <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-full bg-brand-electric"></div> <span>Tesla Supercharger</span></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // --- SVG Icons Data ---
+        const icons = {
+            charger: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+            history: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M5 10v12"></path><path d="M19 10v12"></path><path d="M2 10h20"></path><path d="M12 2a4 4 0 0 0-4 4h8a4 4 0 0 0-4-4z"></path></svg>`,
+            nature: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"></path></svg>`,
+            stay: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"></path><path d="M2 8h18a2 2 0 0 1 2 2v10"></path><path d="M2 17h20"></path><path d="M6 8v9"></path></svg>`,
+            start: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`
+        };
+
+        const routeData = [
+            {
+                id: 1,
+                title: "LEG 1: The Shropshire Marches",
+                direction: "Outbound",
+                stats: "~65 miles",
+                estimatedTimeRange: "1h 45m – 2h 20m",
+                optimalTravelTime: "Depart mid-morning (approx 10:00 AM). Avoid the A49 around Shrewsbury during the 08:00 AM commuter rush.",
+                desc: "Leaving the Cheshire Plain, you cross into the Welsh Marches via the A530/A49. Skip busy towns for Stokesay Castle, a fine 13th-century fortified manor house.",
+                waypoints: [
+                    { name: "Macclesfield (Start)", lat: 53.259, lng: -2.127, type: "start", desc: "The industrial silk-weaving town." },
+                    { name: "Stokesay Castle", lat: 52.435, lng: -2.830, type: "history", desc: "Finest preserved 13th-century fortified manor house in England." },
+                    { name: "Ludlow Supercharger", lat: 52.373, lng: -2.718, type: "charger", desc: "Top up near Stokesay." },
+                    { name: "YHA Clun Mill", lat: 52.423, lng: -3.030, type: "stay", desc: "Restored 18th-century watermill tucked into a quiet historic valley." }
+                ],
+                // Tracing A536 -> A530 -> A49
+                path: [[53.259, -2.127], [53.164, -2.210], [53.141, -2.338], [53.067, -2.441], [52.968, -2.682], [52.853, -2.717], [52.708, -2.753], [52.539, -2.806], [52.435, -2.830], [52.373, -2.718], [52.380, -2.850], [52.423, -3.030]]
+            },
+            {
+                id: 2,
+                title: "LEG 2: The Severn Vale & Cotswolds",
+                direction: "Outbound",
+                stats: "~70 miles",
+                estimatedTimeRange: "1h 50m – 2h 30m",
+                optimalTravelTime: "Early afternoon travel. The A417 'Missing Link' near Gloucester and Birdlip is a notorious bottleneck from 15:30 to 18:30.",
+                desc: "Drive south through Hereford. Aim for the dramatic escarpment of Haresfield Beacon and the stark ruins of Hailes Abbey, sitting silently in a fold of the hills.",
+                waypoints: [
+                    { name: "Hailes Abbey", lat: 51.966, lng: -1.923, type: "history", desc: "Former Cistercian monastery dissolved by Henry VIII." },
+                    { name: "Haresfield Beacon", lat: 51.776, lng: -2.234, type: "nature", desc: "Spectacular sweeping views over the Severn Estuary." },
+                    { name: "Dursley / Michaelwood SC", lat: 51.658, lng: -2.408, type: "charger", desc: "Supercharger positioned just off the route." },
+                    { name: "YHA Slimbridge", lat: 51.740, lng: -2.404, type: "stay", desc: "Nestled along the quiet lanes near the Berkeley Estate." }
+                ],
+                // Tracing A49 -> A417
+                path: [[52.423, -3.030], [52.373, -2.718], [52.228, -2.738], [52.056, -2.716], [51.914, -2.583], [51.864, -2.270], [51.966, -1.923], [51.864, -2.270], [51.776, -2.234], [51.658, -2.408], [51.740, -2.404]]
+            },
+            {
+                id: 3,
+                title: "LEG 3: Exmoor & North Devon Coast",
+                direction: "Outbound",
+                stats: "~85 miles",
+                estimatedTimeRange: "2h 00m – 2h 45m",
+                optimalTravelTime: "Early Saturday morning or midweek late morning. Avoid M5 southbound on Friday afternoons, which severely impacts the Bridgwater corridor.",
+                desc: "Cross into Somerset, skirting the Quantock Hills. Destination is the jaw-dropping Valley of Rocks, bypassing typical commercial seaside traps for ancient, jagged landscapes.",
+                waypoints: [
+                    { name: "Tiverton Supercharger", lat: 50.910, lng: -3.424, type: "charger", desc: "Grab a charge before heading into deep coastal valleys." },
+                    { name: "Valley of Rocks", lat: 51.233, lng: -3.850, type: "nature", desc: "Wild, dry river valley defined by surreal Devonian rock formations." },
+                    { name: "YHA Exford", lat: 51.134, lng: -3.528, type: "stay", desc: "Authentic lodge in the heart of Exmoor, perfect for stargazing." }
+                ],
+                // Tracing M5 -> A396 -> Coast
+                path: [[51.740, -2.404], [51.600, -2.550], [51.370, -2.900], [51.130, -3.000], [50.910, -3.424], [50.990, -3.480], [51.150, -3.800], [51.233, -3.850], [51.134, -3.528]]
+            },
+            {
+                id: 4,
+                title: "LEG 4: The Wiltshire Downs",
+                direction: "Return",
+                stats: "~80 miles",
+                estimatedTimeRange: "2h 00m – 2h 40m",
+                optimalTravelTime: "Arrive at West Kennet and Lacock either early morning or late afternoon to bypass peak commercial tourism hours.",
+                desc: "Swing east tracking old monastic routes. Head to high chalk downs, visiting Lacock Abbey's medieval cloisters and the prehistoric West Kennet Long Barrow.",
+                waypoints: [
+                    { name: "Lacock Abbey", lat: 51.414, lng: -2.116, type: "history", desc: "Preserved 13th-century village and monastic brewing house." },
+                    { name: "West Kennet Long Barrow", lat: 51.408, lng: -1.850, type: "history", desc: "Massive Neolithic burial chamber, walk inside ancient stone cells." },
+                    { name: "Chippenham SC", lat: 51.472, lng: -2.138, type: "charger", desc: "Top up in Wiltshire." },
+                    { name: "YHA Bath Mill", lat: 51.378, lng: -2.395, type: "stay", desc: "Tucked in a wooded valley on the Cotswold fringe." }
+                ],
+                // Tracing A39 -> M5 -> M4 -> A350
+                path: [[51.134, -3.528], [51.180, -3.470], [51.130, -3.000], [51.370, -2.900], [51.520, -2.560], [51.472, -2.138], [51.414, -2.116], [51.408, -1.850], [51.378, -2.395]]
+            },
+            {
+                id: 5,
+                title: "LEG 5: Staffordshire Moorlands",
+                direction: "Return",
+                stats: "~95 miles",
+                estimatedTimeRange: "2h 15m – 3h 10m",
+                optimalTravelTime: "Mid-day (11:00-14:00) or Sundays. Bypassing Birmingham via M5/M6 is highly susceptible to severe weekday commuter delays (07:00-09:30 & 16:00-18:30).",
+                desc: "Push north up the spine of the country via historic backroads. Stop at Croxden Abbey, majestic 12th-century limestone ruins ignored by mainstream tourism.",
+                waypoints: [
+                    { name: "Croxden Abbey", lat: 52.955, lng: -1.905, type: "history", desc: "Soaring 12th-century Cistercian abbey ruins." },
+                    { name: "Uttoxeter SC", lat: 52.898, lng: -1.848, type: "charger", desc: "Perfectly positioned minutes from Croxden." },
+                    { name: "YHA Ilam Hall", lat: 53.054, lng: -1.802, type: "stay", desc: "Gothic manor house at the entrance to Dovedale." }
+                ],
+                // Tracing A46 -> M5 -> M6 -> A50
+                path: [[51.378, -2.395], [51.500, -2.360], [51.600, -2.550], [52.000, -2.150], [52.450, -1.950], [52.800, -2.100], [52.898, -1.848], [52.955, -1.905], [53.054, -1.802]]
+            },
+            {
+                id: 6,
+                title: "LEG 6: The Peak District Fringe",
+                direction: "Return",
+                stats: "~25 miles",
+                estimatedTimeRange: "45m – 1h 10m",
+                optimalTravelTime: "Late afternoon. The Peak District fringe routes (A53/A54) are much quieter post-16:00, allowing a scenic sunset cruise.",
+                desc: "A short final leg through rugged gritstone ridges. Stop at Lud's Church, a moss-covered chasm, before cruising back into Macclesfield.",
+                waypoints: [
+                    { name: "Lud's Church", lat: 53.188, lng: -2.009, type: "nature", desc: "Profound, moss-covered deep green chasm in gritstone bedrock." },
+                    { name: "Macclesfield (End)", lat: 53.260, lng: -2.128, type: "start", desc: "Return to the Silk Capital." }
+                ],
+                // Tracing A53 -> A54
+                path: [[53.054, -1.802], [53.110, -1.930], [53.188, -2.009], [53.220, -2.080], [53.260, -2.128]]
+            }
+        ];
+
+        let map;
+        let markers = [];
+        let polylines = [];
+        let currentFilter = 'all';
+
+        function initMap() {
+            // Initialize map centered roughly on the route
+            map = L.map('map', {
+                zoomControl: false // Custom position later
+            }).setView([52.2, -2.5], 7);
+
+            // Add Zoom control to top right
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+
+            // Add Dark Matter Tile Layer (CartoDB)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+
+            renderSidebar();
+            renderMapElements();
+            
+            // Adjust map view to fit bounds
+            fitRouteBounds();
+        }
+
+        // Creates a custom DivIcon based on the waypoint type
+        function createCustomIcon(type) {
+            let iconHtml = icons[type] || icons.start;
+            let iconSize = type === 'start' ? [28, 28] : [32, 32];
+            
+            return L.divIcon({
+                className: `custom-marker marker-${type}`,
+                html: iconHtml,
+                iconSize: iconSize,
+                iconAnchor: [iconSize[0]/2, iconSize[1]/2],
+                popupAnchor: [0, -iconSize[1]/2]
+            });
+        }
+
+        function renderMapElements() {
+            // Clear existing
+            markers.forEach(m => map.removeLayer(m));
+            polylines.forEach(p => map.removeLayer(p));
+            markers = [];
+            polylines = [];
+
+            // Draw Paths (Polylines)
+            routeData.forEach((leg, index) => {
+                // Determine if we should connect from previous leg
+                let fullPath = [...leg.path];
+                if (index > 0) {
+                    const prevLeg = routeData[index - 1];
+                    const lastPoint = prevLeg.path[prevLeg.path.length - 1];
+                    fullPath.unshift(lastPoint);
+                }
+
+                const polyline = L.polyline(fullPath, {
+                    color: leg.direction === "Outbound" ? '#0ea5e9' : '#38bdf8',
+                    weight: 4,
+                    opacity: 0.8,
+                    className: 'electric-route',
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(map);
+                
+                polylines.push(polyline);
+            });
+
+            // Draw Markers
+            routeData.forEach(leg => {
+                leg.waypoints.forEach(wp => {
+                    // Filter logic
+                    if (currentFilter !== 'all' && wp.type !== currentFilter && wp.type !== 'start') return;
+
+                    const marker = L.marker([wp.lat, wp.lng], {
+                        icon: createCustomIcon(wp.type),
+                        wpType: wp.type,
+                        legId: leg.id
+                    });
+
+                    const popupContent = `
+                        <div class="p-1">
+                            <h4 class="font-bold text-white mb-1">${wp.name}</h4>
+                            <p class="text-xs text-slate-300">${wp.desc}</p>
+                            <div class="mt-2 text-[10px] uppercase tracking-wide text-${getColorClass(wp.type)}">
+                                ${formatType(wp.type)}
+                            </div>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                    marker.addTo(map);
+                    markers.push(marker);
+                });
+            });
+        }
+
+        // Helper for popup text colors
+        function getColorClass(type) {
+            const map = { charger: 'brand-electric', history: 'brand-historical', nature: 'brand-nature', stay: 'brand-stay', start: 'slate-400' };
+            return map[type] || 'slate-200';
+        }
+        function formatType(type) {
+            if(type === 'stay') return 'Historic Lodging';
+            if(type === 'history') return 'Antiquity & Ruins';
+            if(type === 'nature') return 'Landscape';
+            if(type === 'charger') return 'EV Rapid Charger';
+            return 'Waypoint';
+        }
+
+        function renderSidebar() {
+            const container = document.getElementById('legs-container');
+            container.innerHTML = '';
+
+            routeData.forEach(leg => {
+                const isOutbound = leg.direction === 'Outbound';
+                const badgeColor = isOutbound ? 'bg-sky-900/50 text-sky-300 border-sky-700/50' : 'bg-indigo-900/50 text-indigo-300 border-indigo-700/50';
+                
+                let waypointsHtml = leg.waypoints.map(wp => `
+                    <li class="flex items-start gap-3 mt-3 cursor-pointer group" onclick="focusWaypoint(${wp.lat}, ${wp.lng})">
+                        <div class="mt-0.5 p-1.5 rounded-full bg-slate-800 border border-slate-600 group-hover:border-${getColorClass(wp.type)} text-${getColorClass(wp.type)} transition-colors">
+                            ${icons[wp.type] || icons.start}
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">${wp.name}</p>
+                            <p class="text-xs text-slate-400">${wp.desc}</p>
+                        </div>
+                    </li>
+                `).join('');
+
+                const legCard = document.createElement('div');
+                legCard.className = `p-5 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-slate-500 transition-colors cursor-pointer`;
+                legCard.onclick = (e) => {
+                    // Prevent trigger if clicking a specific waypoint list item
+                    if(e.target.closest('li')) return; 
+                    focusLeg(leg.id);
+                };
+
+                legCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-slate-100 text-lg">${leg.title}</h3>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded border ${badgeColor}">${leg.direction}</span>
+                    </div>
+                    <p class="text-xs font-medium text-brand-electric mb-3">${leg.stats}</p>
+                    
+                    <div class="flex flex-col gap-2 mb-4 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 shadow-inner">
+                        <div class="flex items-center gap-2 text-xs text-slate-300">
+                            <svg class="w-4 h-4 text-brand-electric flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="font-medium">Est. Duration:</span> ${leg.estimatedTimeRange}
+                        </div>
+                        <div class="flex items-start gap-2 text-xs text-slate-400">
+                            <svg class="w-4 h-4 text-brand-historical flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span class="leading-relaxed"><strong class="text-slate-300 font-semibold">Optimal Travel:</strong> ${leg.optimalTravelTime}</span>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">${leg.desc}</p>
+                    
+                    <div class="border-t border-slate-700/50 pt-3">
+                        <h4 class="text-xs uppercase tracking-wider text-slate-500 mb-2">Key Waypoints</h4>
+                        <ul class="space-y-1">
+                            ${waypointsHtml}
+                        </ul>
+                    </div>
+                `;
+                container.appendChild(legCard);
+            });
+        }
+
+        function focusLeg(legId) {
+            const leg = routeData.find(l => l.id === legId);
+            if (!leg) return;
+            
+            // Highlight sidebar
+            document.querySelectorAll('#legs-container > div').forEach((el, index) => {
+                if(index + 1 === legId) {
+                    el.classList.add('border-brand-electric', 'bg-slate-800');
+                    el.classList.remove('border-slate-700', 'bg-slate-800/50');
+                } else {
+                    el.classList.remove('border-brand-electric', 'bg-slate-800');
+                    el.classList.add('border-slate-700', 'bg-slate-800/50');
+                }
+            });
+
+            // Get bounds of the leg path
+            const bounds = L.latLngBounds(leg.path);
+            map.flyToBounds(bounds, { padding: [50, 50], duration: 1.5 });
+        }
+
+        function focusWaypoint(lat, lng) {
+            map.flyTo([lat, lng], 13, { duration: 1.5 });
+            
+            // Find and open marker popup after flying
+            setTimeout(() => {
+                markers.forEach(m => {
+                    const pos = m.getLatLng();
+                    if(Math.abs(pos.lat - lat) < 0.0001 && Math.abs(pos.lng - lng) < 0.0001) {
+                        m.openPopup();
+                    }
+                });
+            }, 1500);
+        }
+
+        function fitRouteBounds() {
+            const allPoints = routeData.flatMap(leg => leg.path);
+            const bounds = L.latLngBounds(allPoints);
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+
+        function filterMarkers(type) {
+            currentFilter = type;
+            
+            // Update UI buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.style.boxShadow = 'none';
+                if(btn.innerText.toLowerCase().includes(type) || (type === 'all' && btn.innerText === 'All Stops')) {
+                    btn.classList.add('ring-2', 'ring-white/50');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-white/50');
+                }
+            });
+
+            renderMapElements();
+        }
+
+        // Initialize on load
+        window.onload = initMap;
+    </script>
+</body>
+</html>

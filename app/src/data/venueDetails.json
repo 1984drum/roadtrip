@@ -1,0 +1,488 @@
+{
+  "stokesay": {
+    "wiki": {
+      "extract": "Stokesay Castle is one of the finest surviving fortified manor houses in England, and situated at Stokesay in Shropshire. It was largely built in its present form in the late 13th century by Laurence of Ludlow, on the earlier castle founded by its original owners the de Lacy family, from whom it passed to their de Verdun heirs, who retained feudal overlordship of Stokesay until at least 1317. Laurence 'of' Ludlow was one of the leading wool merchants in England, who intended it to form a secure private house and generate income as a commercial estate. Laurence's descendants continued to own the castle until the 16th century, when it passed through various private owners. By the time of the outbreak of the First English Civil War in 1642, Stokesay was owned by William Craven, 1st Earl of Craven (1608–1697), a supporter of King Charles I. After the Royalist war effort collapsed in 1645, Parliamentary forces besieged the castle in June and quickly forced its garrison to surrender. Parliament ordered the property to be slighted, but only minor damage was done to the walls, allowing Stokesay to continue to be used as a house by the Baldwyn family until the end of the 17th century.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Stokesay_Castle_from_churchyard_1.jpg",
+      "url": "https://en.wikipedia.org/wiki/Stokesay_Castle",
+      "title": "Stokesay Castle"
+    },
+    "address": "Ludlow Road, Whettleton, Shropshire, SY7 9EH"
+  },
+  "hailes": {
+    "wiki": {
+      "extract": "Hailes Abbey is a former Cistercian abbey, in the small village of Hailes, two miles northeast of Winchcombe, Gloucestershire, England. It was founded in 1246 as a daughter establishment of Beaulieu Abbey in Hampshire. The abbey was dissolved by Henry VIII in 1539. Little remains of the abbey. It is a Grade I listed building and a scheduled monument.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Hailes_Abbey_Landscape.jpg",
+      "url": "https://en.wikipedia.org/wiki/Hailes_Abbey",
+      "title": "Hailes Abbey"
+    },
+    "address": "Hailes, Gloucestershire, GL54 5PB"
+  },
+  "haresfield": {
+    "wiki": {
+      "extract": "Haresfield Beacon is a 0.73-hectare (1.8-acre) geological Site of Special Scientific Interest in Gloucestershire, notified in 1985. The site is listed in the ‘Stroud District’ Local Plan, adopted November 2005, Appendix 6 as an SSSI and a Regionally Important Geological Site (RIGS).",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/91/View_from_Haresfield_Beacon_-_geograph.org.uk_-_1120282.jpg",
+      "url": "https://en.wikipedia.org/wiki/Haresfield_Beacon",
+      "title": "Haresfield Beacon"
+    },
+    "address": "Stockend, Gloucestershire, GL6 6PN"
+  },
+  "valley-rocks": {
+    "wiki": {
+      "extract": "The Valley of Rocks, sometimes called Valley of the Rocks, is a dry valley that runs parallel to the coast in north Devon, England, about 1 kilometre (0.6 mi) to the west of the village of Lynton. It is a popular tourist destination, noted for its herd of feral goats, and for its landscape and geology.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Valley_of_the_Rocks_from_Hollerday_Hill.jpg",
+      "url": "https://en.wikipedia.org/wiki/Valley_of_Rocks",
+      "title": "Valley of Rocks"
+    },
+    "address": "Lynbridge, Devon, EX35 6JH"
+  },
+  "lacock": {
+    "wiki": {
+      "extract": "Lacock Abbey is a country house in the village of Lacock, Wiltshire, England. There was an abbey of nuns on the site until 1539, and the house is a remodelling and extension of the abbey's cloister court. The Grade I listed building is owned by the National Trust and is notable as the site of Henry Fox Talbot's pioneering work in photography in the 1830s.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lacock_Abbey_from_south%2C_Wiltshire%2C_UK_-_Diliff.jpg/3840px-Lacock_Abbey_from_south%2C_Wiltshire%2C_UK_-_Diliff.jpg",
+      "url": "https://en.wikipedia.org/wiki/Lacock_Abbey",
+      "title": "Lacock Abbey"
+    },
+    "address": "Hither Way, Reybridge, Wiltshire, SN15 2LG"
+  },
+  "west-kennet": {
+    "wiki": {
+      "extract": "The West Kennet Long Barrow, also known as South Long Barrow, is a chambered long barrow near the village of Avebury in the south-western English county of Wiltshire. Probably constructed in the thirty-seventh century BC, during Britain's Early Neolithic period. Today it survives in a partially reconstructed state.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/49/Westkennet.jpg",
+      "url": "https://en.wikipedia.org/wiki/West_Kennet_Long_Barrow",
+      "title": "West Kennet Long Barrow"
+    },
+    "address": "Gunsite Road, Beckhampton, Wiltshire, SN8 1QF"
+  },
+  "croxden": {
+    "wiki": {
+      "extract": "Croxden Abbey, also known as \"Abbey of the Vale of St. Mary at Croxden\", was a Cistercian abbey at Croxden, Staffordshire, United Kingdom. A daughter house of the abbey in Aunay-sur-Odon, Normandy, the abbey was founded by Bertram III de Verdun of Alton Castle, Staffordshire, in the 12th century. The abbey was dissolved in 1538.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e2/CroxdenAbbey%28LindaBailey%29Aug2006.jpg",
+      "url": "https://en.wikipedia.org/wiki/Croxden_Abbey",
+      "title": "Croxden Abbey"
+    },
+    "address": "Croxden Road, Croxden, Staffordshire, ST14 5JF"
+  },
+  "luds-church": {
+    "wiki": {
+      "extract": "Lud's Church is a deep chasm penetrating the Millstone Grit bedrock created by a massive landslip on the hillside above Gradbach, Staffordshire, England. It is located in a wood known as Back Forest, in the Dark Peak, towards the southwest fringe of the Peak District National Park about 2.5 miles (4.0 km) west of the A53 between Leek and Buxton. Over 100 metres (328 ft) long and 18 metres (59 ft) deep, all but the upper third of the slope has slipped forward towards the River Dane. It is mossy and overgrown, wet and cool even on the hottest of days.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Lud%27s_Church_2016-06-05.jpg/3840px-Lud%27s_Church_2016-06-05.jpg",
+      "url": "https://en.wikipedia.org/wiki/Lud's_Church",
+      "title": "Lud's Church"
+    },
+    "address": "Agecroft Road, Staffordshire Moorlands, Staffordshire, SK17 0SU"
+  },
+  "opt-moreton": {
+    "wiki": {
+      "extract": "Little Moreton Hall, also known as Old Moreton Hall, is a manor house 4.5 miles (7.2 km) south-west of Congleton in Cheshire, England. The earliest parts of the house were built for the prosperous Cheshire landowner William Moreton in about 1504–1508 and the remainder was constructed in stages by successive generations of the family until about 1610. The half-timbered building is highly irregular, with three asymmetrical ranges forming a small, rectangular cobbled courtyard. A National Trust guidebook describes Little Moreton Hall as being \"lifted straight from a fairy story, a gingerbread house.\" The house's top-heavy appearance, \"like a stranded Noah's Ark\", is due to the Long Gallery that runs the length of the south range's upper floor.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/27/LittleMoretonHall.jpg",
+      "url": "https://en.wikipedia.org/wiki/Little_Moreton_Hall",
+      "title": "Little Moreton Hall"
+    },
+    "address": "Congleton Road, Scholar Green, Cheshire East, CW12 4SD"
+  },
+  "opt-beeston": {
+    "wiki": {
+      "extract": "Beeston Castle is a former Royal castle in Beeston, Cheshire, England, perched on a rocky sandstone crag 350 feet (107 m) above the Cheshire Plain. It was built in the 1220s by Ranulf de Blondeville, 6th Earl of Chester (1170–1232), on his return from the Crusades. In 1237, Henry III took over the ownership of Beeston, and it was kept in good repair until the 16th century, when it was considered to be of no further military use, although it was pressed into service again in 1643, during the English Civil War. The castle was slighted in 1646, in accordance with Cromwell's destruction order, to prevent its further use as a bastion. During the 18th century, parts of the site were used as a quarry.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Remains_of_Beeston_Castle_-_geograph.org.uk_-_8086657.jpg/3840px-Remains_of_Beeston_Castle_-_geograph.org.uk_-_8086657.jpg",
+      "url": "https://en.wikipedia.org/wiki/Beeston_Castle",
+      "title": "Beeston Castle"
+    },
+    "address": "Beeston, Cheshire West and Chester, CW6 9YF"
+  },
+  "opt-wroxeter": {
+    "wiki": {
+      "extract": "Viroconium or Uriconium, formally Viroconium Cornoviorum, was a Roman city, one corner of which is now occupied by Wroxeter, a small village in Shropshire, England, about 5 miles (8 km) east-south-east of Shrewsbury. At its peak, Viroconium is estimated to have been the 4th-largest Roman settlement in Britain, a civitas with a population of more than 15,000. The settlement probably lasted until the end of the 7th century or the beginning of the 8th. Extensive remains can still be seen, in the care of English Heritage, with an on-site Museum and reconstructed Roman house.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/24/Viroconium_Cornoviorum_08.jpg",
+      "url": "https://en.wikipedia.org/wiki/Viroconium_Cornoviorum",
+      "title": "Viroconium Cornoviorum"
+    },
+    "address": "Watling Street, Norton, Shropshire, SY5 6PJ"
+  },
+  "opt-acton": {
+    "wiki": {
+      "extract": "Acton Burnell Castle is a 13th-century fortified manor house, located near the village of Acton Burnell, Shropshire, England. It is believed that the first Parliament of England at which the Commons were fully represented was held here in 1283. Today all that remains is the outer shell of the manor house and the gable ends of the barn. It is a Grade I listed building on the Statutory List of Buildings of Special Architectural or Historic Interest.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Acton_Burnell_Castle_2016.jpg/3840px-Acton_Burnell_Castle_2016.jpg",
+      "url": "https://en.wikipedia.org/wiki/Acton_Burnell_Castle",
+      "title": "Acton Burnell Castle"
+    },
+    "address": "Acton Burnell, Shropshire, SY5 7PG"
+  },
+  "opt-ludlow-castle": {
+    "wiki": {
+      "extract": "Ludlow Castle is a ruined medieval fortification in the town of Ludlow in the English county of Shropshire, standing on a promontory overlooking the River Teme. The castle was probably founded by Walter de Lacy after the Norman Conquest and was one of the first stone castles to be built in England. During the civil war of the 12th century the castle changed hands several times between the de Lacys and rival claimants, and was further fortified with a Great Tower and a large outer bailey. In the mid-13th century, Ludlow was passed on to Geoffrey de Geneville, who rebuilt part of the inner bailey, and the castle played a part in the Second Barons' War. Roger Mortimer acquired the castle in 1301, further extending the internal complex of buildings. Richard, Duke of York, inherited the castle in 1425, and it became an important symbol of Yorkist authority during the Wars of the Roses. When Richard's son, Edward IV, seized the throne in 1461 it passed into the ownership of the Crown. Ludlow Castle was chosen as the seat of the Council of Wales and the Marches, effectively acting as the capital of Wales, and it was extensively renovated throughout the 16th century. By the 17th century the castle was luxuriously appointed, hosting cultural events such as the first performance of John Milton's masque Comus. Ludlow Castle was held by the Royalists during the English Civil War of the 1640s, until it was besieged and taken by a Parliamentarian army in 1646. The contents of the castle were sold off and a garrison was retained there for much of the interregnum.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/54/Ludlow_Castle_from_Whitcliffe%2C_2011.jpg",
+      "url": "https://en.wikipedia.org/wiki/Ludlow_Castle",
+      "title": "Ludlow Castle"
+    },
+    "address": "Events Square, Ludlow, Shropshire, SY8 1GD"
+  },
+  "opt-feathers": {
+    "wiki": {
+      "extract": "The Feathers Hotel is a historic inn in Ludlow, Shropshire. Its imposing half-timbered frontage was constructed in 1619, over an earlier core, for a local lawyer, Rees Jones. John Newman describes the hotel as a \"prodigy\" of Tudor architecture and it is noted for its Jacobean furnishings. It is a Grade I listed building, listed on 15 April 1954, and is one of approximately 500 listed buildings in Ludlow, but one of its best known.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/30/Feathers_hotel.jpg",
+      "url": "https://en.wikipedia.org/wiki/Feathers_Hotel%2C_Ludlow",
+      "title": "Feathers Hotel, Ludlow"
+    },
+    "address": "Callens, Ludlow, Shropshire, SY8 1AW"
+  },
+  "opt-kilpeck": {
+    "wiki": {
+      "extract": "The Church of St Mary and St David is a Church of England parish church at Kilpeck in the English county of Herefordshire, about 5 miles from the border with Monmouthshire, Wales. Pevsner describes Kilpeck as \"one of the most perfect Norman churches in England\". Famous for its stone carvings, the church is a Grade I listed building.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/11/KilpeckChurch%28PhilipHalling%29Feb2006.jpg",
+      "url": "https://en.wikipedia.org/wiki/Church_of_St_Mary_and_St_David%2C_Kilpeck",
+      "title": "Church of St Mary and St David, Kilpeck"
+    },
+    "address": "St Devereux, Herefordshire, HR2 9DN"
+  },
+  "opt-hereford": {
+    "wiki": {
+      "extract": "Hereford Cathedral, formally the Cathedral of Saint Mary the Virgin and Saint Ethelbert the King in Hereford, is a Church of England cathedral in Hereford, England. It is the seat of the bishop of Hereford and the principal church of the diocese of Hereford. The cathedral is a grade I listed building.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hereford_Cathedral_Exterior_from_NW%2C_Herefordshire%2C_UK_-_Diliff.jpg/3840px-Hereford_Cathedral_Exterior_from_NW%2C_Herefordshire%2C_UK_-_Diliff.jpg",
+      "url": "https://en.wikipedia.org/wiki/Hereford_Cathedral",
+      "title": "Hereford Cathedral"
+    },
+    "address": "Hereford, Herefordshire, HR1 2NG"
+  },
+  "opt-goodrich": {
+    "wiki": {
+      "extract": "Goodrich Castle is a Norman medieval castle ruin north of the village of Goodrich in Herefordshire, England, controlling a key location between Monmouth and Ross-on-Wye. It was praised by William Wordsworth as the \"noblest ruin in Herefordshire\" and is considered by historian Adrian Pettifer to be the \"most splendid in the county, and one of the best examples of English military architecture\".",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/47/Goodrich_above.jpg",
+      "url": "https://en.wikipedia.org/wiki/Goodrich_Castle",
+      "title": "Goodrich Castle"
+    },
+    "address": "Castle Lane, Goodrich Cross, Herefordshire, HR9 6HL"
+  },
+  "opt-tewkesbury": {
+    "wiki": {
+      "extract": "The Parish Church of St Mary the Virgin, Tewkesbury, commonly known as Tewkesbury Abbey, is located in the town of Tewkesbury in the ceremonial county of Gloucestershire, England. A former Benedictine monastery, it is now a parish church. Considered one of the finest examples of Norman architecture in Britain, it has \"probably the largest and finest Romanesque\" crossing tower in England.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Tewkesbury_Abbey_2011.jpg",
+      "url": "https://en.wikipedia.org/wiki/Tewkesbury_Abbey",
+      "title": "Tewkesbury Abbey"
+    },
+    "address": "Church Street, Tewkesbury, Gloucestershire, GL20 5RZ"
+  },
+  "opt-sudeley": {
+    "wiki": {
+      "extract": "Sudeley Castle is a Grade I listed castle in the parish of Sudeley, in the Cotswolds, near to the medieval market town of Winchcombe, Gloucestershire, England. The castle has 10 notable gardens covering some 15 acres (6.1 ha) within a 1,200-acre (490 ha) estate in the Cotswold hills.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Aerial_photo_of_Sudeley_Castle.jpg/3840px-Aerial_photo_of_Sudeley_Castle.jpg",
+      "url": "https://en.wikipedia.org/wiki/Sudeley_Castle",
+      "title": "Sudeley Castle"
+    },
+    "address": "Winchcombe, Gloucestershire, GL54 5JB"
+  },
+  "opt-belas": {
+    "wiki": {
+      "extract": "Belas Knap is a Neolithic, chambered long barrow situated on Cleeve Hill, near Cheltenham and Winchcombe, in Gloucestershire, England.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Belas-knap.jpg",
+      "url": "https://en.wikipedia.org/wiki/Belas_Knap",
+      "title": "Belas Knap"
+    },
+    "address": "Corndean Lane, Charlton Abbots, Gloucestershire, GL54 5TG"
+  },
+  "opt-woolpack": {
+    "wiki": {
+      "extract": "Slad is a village in Gloucestershire, England, in the Slad Valley about 2 miles (3 km) from Stroud on the B4070 road from Stroud to Birdlip.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Slad_Village_-_geograph.org.uk_-_759427.jpg",
+      "url": "https://en.wikipedia.org/wiki/Slad",
+      "title": "Slad"
+    },
+    "address": "Elcombe, Gloucestershire, GL6 7QA"
+  },
+  "opt-berkeley": {
+    "wiki": {
+      "extract": "Berkeley Castle is a castle in the town of Berkeley, Gloucestershire, England. The castle's origins date back to the 11th century and it is a Grade I listed building.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/11/Berkeley_Castle_-_geograph.org.uk_-_3079433.jpg",
+      "url": "https://en.wikipedia.org/wiki/Berkeley_Castle",
+      "title": "Berkeley Castle"
+    },
+    "address": "Church Lane, Ham, Gloucestershire, GL13 9BN"
+  },
+  "opt-wells": {
+    "wiki": {
+      "extract": "Wells Cathedral, formally the Cathedral Church of St Andrew, is a Church of England cathedral in Wells, Somerset, England. It is the seat of the bishop of Bath and Wells and the mother church of the diocese of Bath and Wells. There are daily Church of England services in the building, and in 2023 it was reported to receive over 300,000 visitors per year. The cathedral is a Grade I listed building. The cathedral precincts contain the Bishop's Palace and several buildings linked to its medieval chapter of secular canons, including the fifteenth-century Vicars' Close.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Wells_Cathedral_West_Front_Exterior%2C_UK_-_Diliff.jpg/3840px-Wells_Cathedral_West_Front_Exterior%2C_UK_-_Diliff.jpg",
+      "url": "https://en.wikipedia.org/wiki/Wells_Cathedral",
+      "title": "Wells Cathedral"
+    },
+    "address": "Cathedral Green, Wells, Somerset, BA5 2UE"
+  },
+  "opt-glastonbury": {
+    "wiki": {
+      "extract": "Glastonbury Tor is a hill near Glastonbury in the English county of Somerset, topped by the roofless tower of St Michael's Church, a Grade I listed building. The site is managed by the National Trust and has been designated a scheduled monument. The Tor is mentioned in Welsh mythology particularly in myths linked to King Arthur and the island of Avalon, and has several other enduring mythological and spiritual associations.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Glastonbury_Tor-_View_of_an_iconic_landmark_%28geograph_5500644%29.jpg",
+      "url": "https://en.wikipedia.org/wiki/Glastonbury_Tor",
+      "title": "Glastonbury Tor"
+    },
+    "address": "Glastonbury, Somerset, BA6 8BG"
+  },
+  "opt-cleeve": {
+    "wiki": {
+      "extract": "Cleeve Abbey is a medieval monastery located near the Washford River and village of Washford, in the English county of Somerset. It is a Grade I listed building and has been scheduled as an ancient monument.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0f/CleeveAbbeyDormitoryC.jpg",
+      "url": "https://en.wikipedia.org/wiki/Cleeve_Abbey",
+      "title": "Cleeve Abbey"
+    },
+    "address": "Abbey Road, Hungerford, Somerset, TA23 0PS"
+  },
+  "opt-dunster": {
+    "wiki": {
+      "extract": "Dunster Castle is a former motte and bailey castle, now a country house, in the village of Dunster, Somerset, England. The castle lies on the top of a steep hill called the Tor, and has been fortified since the late Anglo-Saxon period. After the Norman Conquest of England in the 11th century, William de Mohun constructed a timber castle on the site as part of the pacification of Somerset. A stone shell keep was built on the motte by the start of the 12th century, and the castle survived a siege during the early years of the Anarchy. At the end of the 14th century the de Mohuns sold the castle to the Luttrell family, who continued to occupy the property until the late 20th century.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Dunster_Castle.jpg",
+      "url": "https://en.wikipedia.org/wiki/Dunster_Castle",
+      "title": "Dunster Castle"
+    },
+    "address": "Mill Lane, Dunster, Somerset, TA24 6SW"
+  },
+  "opt-tarr": {
+    "wiki": {
+      "extract": "Tarr Steps is a clapper bridge across the River Barle in the Exmoor National Park, Somerset, England. The bridge is in a national nature reserve about 2.5 miles (4 km) south east of Withypool and 4 miles (6 km) north west of Dulverton.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Tarr_Steps_02.jpg",
+      "url": "https://en.wikipedia.org/wiki/Tarr_Steps",
+      "title": "Tarr Steps"
+    },
+    "address": "Tarr Steps, Somerset, TA22 9PY"
+  },
+  "opt-watersmeet": {
+    "wiki": {
+      "extract": "Watersmeet House is a National Trust property located some 1.8 miles (2.9 km) east of Lynmouth, in the English county of Devon. A former fishing lodge, it is today used as an information centre, tea room and shop by the National Trust. Adjoining the house is the Watersmeet SSSI, a Site of Special Scientific Interest.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Watersmeet_House_-_geograph.org.uk_-_1364653.jpg",
+      "url": "https://en.wikipedia.org/wiki/Watersmeet_House",
+      "title": "Watersmeet House"
+    },
+    "address": "Watersmeet Road, Lynmouth, Devon, EX35 6NT"
+  },
+  "opt-royaloak": {
+    "wiki": {
+      "extract": "Winsford is a village and civil parish in Somerset, England, located about 5 miles (8 km) north-west of Dulverton.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Winsfordchurch.jpg",
+      "url": "https://en.wikipedia.org/wiki/Winsford%2C_Somerset",
+      "title": "Winsford, Somerset"
+    },
+    "address": "Halse Lane, Winsford, Somerset, TA24 7JE"
+  },
+  "opt-nunney": {
+    "wiki": {
+      "extract": "Nunney Castle is a medieval castle at Nunney in the English county of Somerset. Built in the late 14th century by Sir John Delamare on the profits of his involvement in the Hundred Years' War, the moated castle's architectural style, possibly influenced by the design of French castles, has provoked considerable academic debate. Remodelled during the late 16th century, Nunney Castle was damaged during the English Civil War and is now ruined.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Nunney_Castle_from_south.jpg/3840px-Nunney_Castle_from_south.jpg",
+      "url": "https://en.wikipedia.org/wiki/Nunney_Castle",
+      "title": "Nunney Castle"
+    },
+    "address": "Church Street, Nunney, Somerset, BA11 4LW"
+  },
+  "opt-farleigh": {
+    "wiki": {
+      "extract": "Farleigh Hungerford Castle, sometimes called Farleigh Castle or Farley Castle, is a medieval castle in Farleigh Hungerford, Somerset, England. The castle was built in two phases: the inner court was constructed between 1377 and 1383 by Sir Thomas Hungerford, who made his fortune as steward to John of Gaunt. The castle was built to a quadrangular design, already slightly old-fashioned, on the site of an existing manor house overlooking the River Frome. A deer park was attached to the castle, requiring the destruction of the nearby village. Sir Thomas's son, Sir Walter Hungerford, a knight and leading courtier to Henry V, became rich during the Hundred Years War with France and extended the castle with an additional, outer court, enclosing the parish church in the process. By Walter's death in 1449, the substantial castle was richly appointed, and its chapel decorated with murals.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Farleigh_Hungerford_East_Gate.jpg",
+      "url": "https://en.wikipedia.org/wiki/Farleigh_Hungerford_Castle",
+      "title": "Farleigh Hungerford Castle"
+    },
+    "address": "A366, Farleigh Hungerford, Somerset, BA2 7RS"
+  },
+  "opt-george": {
+    "wiki": {
+      "extract": "The George Inn is a historic establishment in Norton St Philip in Somerset, England. Built in the 14th or 15th century, the inn has been designated as a Grade I listed building, and is one of a number of establishments that claims to be Britain's oldest tavern.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/99/George_Inn_Norton_St_Philip_Geograph-3743829-by-Humphrey-Bolton.jpg",
+      "url": "https://en.wikipedia.org/wiki/The_George_Inn%2C_Norton_St_Philip",
+      "title": "The George Inn, Norton St Philip"
+    },
+    "address": "Bath Road, Norton St. Philip, Somerset, BA2 7LW"
+  },
+  "opt-tithebarn": {
+    "wiki": {
+      "extract": "Bradford-on-Avon Tithe Barn is a Grade I listed barn in Pound Lane, Bradford on Avon, Wiltshire, England. It was part of a medieval grange belonging to Shaftesbury Abbey and was built in the early 14th century, with a granary dated to about 1400. It is owned and protected by English Heritage and managed by the Bradford on Avon Preservation Trust.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/63/Tithe_Barn%2C_Bradford-on-Avon_-_geograph.org.uk_-_1463414.jpg",
+      "url": "https://en.wikipedia.org/wiki/Bradford-on-Avon_Tithe_Barn",
+      "title": "Bradford-on-Avon Tithe Barn"
+    },
+    "address": "Pound Lane, Bradford-on-Avon, Wiltshire, BA15 1EF"
+  },
+  "opt-avebury": {
+    "wiki": {
+      "extract": "Avebury is a Neolithic henge monument containing three stone circles, around the village of Avebury in Wiltshire, in south-west England. One of the best-known prehistoric sites in Britain, it contains the largest megalithic stone circle in the world. It is both a tourist attraction and a place of religious importance to contemporary pagans.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Wiltshire-Avebury.jpg/3840px-Wiltshire-Avebury.jpg",
+      "url": "https://en.wikipedia.org/wiki/Avebury",
+      "title": "Avebury"
+    },
+    "address": "Herepath, Beckhampton, Wiltshire, SN8 1RE"
+  },
+  "opt-silbury": {
+    "wiki": {
+      "extract": "Silbury Hill is a prehistoric artificial chalk mound near Avebury in the English county of Wiltshire. It is part of the Stonehenge, Avebury and Associated Sites UNESCO World Heritage Site. At 39.3 metres (129 ft) high, the hill is the tallest prehistoric man-made mound in Europe and one of the largest in the world; it is similar in volume to contemporary Egyptian pyramids. The site is in the care of English Heritage.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Silbury_1.jpg",
+      "url": "https://en.wikipedia.org/wiki/Silbury_Hill",
+      "title": "Silbury Hill"
+    },
+    "address": "A4, West Kennett, Wiltshire, SN8 1QH"
+  },
+  "opt-worcester": {
+    "wiki": {
+      "extract": "Worcester Cathedral, formally the Cathedral Church of Christ and Blessed Mary the Virgin, is a Church of England cathedral in Worcester, England. The cathedral is the seat of the bishop of Worcester and is the mother church of the diocese of Worcester; it is administered by its dean and chapter. The cathedral is a grade I listed building and part of a scheduled monument.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Worcester_Cathedral%2C_Worcester.jpg/3840px-Worcester_Cathedral%2C_Worcester.jpg",
+      "url": "https://en.wikipedia.org/wiki/Worcester_Cathedral",
+      "title": "Worcester Cathedral"
+    },
+    "address": "Cathedral Close, Worcester, Worcestershire, WR1 2LA"
+  },
+  "opt-lichfield": {
+    "wiki": {
+      "extract": "Lichfield Cathedral, formally the Cathedral Church of Saint Mary and Saint Chad in Lichfield, is a Church of England cathedral in the city of Lichfield, England. It is the seat of the bishop of Lichfield and the principal church of the diocese of Lichfield and holds daily services. The cathedral has been designated a Grade I listed building.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3a/LichCathedral5.jpg",
+      "url": "https://en.wikipedia.org/wiki/Lichfield_Cathedral",
+      "title": "Lichfield Cathedral"
+    },
+    "address": "The Close, Lichfield, Staffordshire, WS13 7LD"
+  },
+  "opt-tutbury": {
+    "wiki": {
+      "extract": "Tutbury Castle is a largely ruined medieval castle at Tutbury, Staffordshire, England, in the ownership of the Duchy of Lancaster and hence currently of King Charles III. It is a scheduled monument and a Grade I listed building. People who have stayed in the castle include Eleanor of Aquitaine and Mary, Queen of Scots, who was a prisoner there.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/84/Tutbury_Castle_%283%29_%28geograph_4461920%29.jpg",
+      "url": "https://en.wikipedia.org/wiki/Tutbury_Castle",
+      "title": "Tutbury Castle"
+    },
+    "address": "Castle Street, Tutbury, Staffordshire, DE13 9JF"
+  },
+  "opt-thors": {
+    "wiki": {
+      "extract": "Thor's Cave is a natural cavern located at SK09865496 in the Manifold Valley of the White Peak in Staffordshire, England. It is classified as a karst cave. Located in a steep limestone crag, the cave entrance, a symmetrical arch 7.5 metres wide and 10 metres high, is prominently visible from the valley bottom, around 80 metres (260 feet) below. Reached by an easy stepped path from the Manifold Way, the cave is a popular tourist spot, with views over the Manifold Valley. The second entrance is known as the \"West Window\", below which is a second cave, Thor's Fissure Cavern.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Thors_cave_view.jpg",
+      "url": "https://en.wikipedia.org/wiki/Thor's_Cave",
+      "title": "Thor's Cave"
+    },
+    "address": "Leek Road, Wetton, Staffordshire"
+  },
+  "opt-threeshires": {
+    "wiki": {
+      "extract": "Three Shire Heads is the tripoint on Axe Edge Moor where Cheshire, Derbyshire and Staffordshire meet, at UK grid reference SK009685, or 53.213°N 1.987°W.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Three_Shire.jpg/3840px-Three_Shire.jpg",
+      "url": "https://en.wikipedia.org/wiki/Three_Shire_Heads",
+      "title": "Three Shire Heads"
+    },
+    "address": "Pannierspool Bridge, High Peak, Derbyshire"
+  },
+  "opt-gawsworth": {
+    "wiki": {
+      "extract": "Gawsworth Old Hall is a Grade I listed country house in the village of Gawsworth, Cheshire, England. It is a timber-framed house in the Cheshire black-and-white style. The present house was built between 1480 and 1600, replacing an earlier Norman house. It was probably built as a courtyard house enclosing a quadrangle, but much of it has been demolished, leaving the house with a U-shaped plan.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Gawsworth_Old_Hall.jpg",
+      "url": "https://en.wikipedia.org/wiki/Gawsworth_Old_Hall",
+      "title": "Gawsworth Old Hall"
+    },
+    "address": "Church Lane, Gawsworth, Cheshire East, SK11 9RN"
+  },
+  "opt-catfiddle": {
+    "wiki": {
+      "extract": "\n\nThe Cat and Fiddle Inn is a former public house in the English Peak District, in Cheshire, close to the border with Derbyshire. It sits on the A537 road from Macclesfield to Buxton, which runs across a high and remote area of moorland. A section of the road is known as the \"Cat and Fiddle Road\" after the inn. The building is some 1,689 feet above sea level, and it was the second-highest public house in Britain before it closed in 2015. In 2020, it reopened as a distillery, shop and bar.",
+      "image": null,
+      "url": "https://en.wikipedia.org/wiki/Cat_and_Fiddle_Inn",
+      "title": "Cat and Fiddle Inn"
+    },
+    "address": "Cheshire East, SK11 0BE"
+  },
+  "macc-start": {
+    "wiki": {
+      "extract": "Macclesfield is a market town and civil parish in the unitary authority of Cheshire East, Cheshire, England. It is sited on the River Bollin and the edge of the Cheshire Plain, with Macclesfield Forest to its east; the town lies 16 miles (26 km) south of Manchester and 38 miles (61 km) east of Chester.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Macclesfield_Town_Hall_%2816339763521%29.jpg/3840px-Macclesfield_Town_Hall_%2816339763521%29.jpg",
+      "url": "https://en.wikipedia.org/wiki/Macclesfield",
+      "title": "Macclesfield"
+    },
+    "address": "Exchange Street, Macclesfield, Cheshire East, SK11 6NE"
+  },
+  "ludlow-sc": {
+    "wiki": {
+      "extract": "Ludlow is a market town and civil parish in south Shropshire, England. It is located 28 miles (45 km) south of Shrewsbury and 23 miles (37 km) north of Hereford, on the A49 road which bypasses the town. The town is near the confluence of the rivers Corve and Teme.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Ludlow%2C_Shropshire.jpg",
+      "url": "https://en.wikipedia.org/wiki/Ludlow",
+      "title": "Ludlow"
+    },
+    "address": "Ludlow, Shropshire, SY8 1DA"
+  },
+  "yha-clun": {
+    "wiki": {
+      "extract": "Clun is a town in south west Shropshire, England, and the Shropshire Hills National Landscape. The 2011 census recorded 680 people living in the town. Research by the Campaign for the Protection of Rural England suggests that Clun is one of the \"most tranquil\" locations in England.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/63/ClunBridge2c.jpg",
+      "url": "https://en.wikipedia.org/wiki/Clun",
+      "title": "Clun"
+    },
+    "address": "Newport Street, Woodside, Shropshire, SY7 8JZ"
+  },
+  "michaelwood-sc": {
+    "wiki": {
+      "extract": "Michaelwood services is a double sided motorway service station on the M5 motorway near Dursley, England. It is owned by Welcome Break.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Car_park%2C_Michaelwood_services_-_geograph.org.uk_-_5043502.jpg",
+      "url": "https://en.wikipedia.org/wiki/Michaelwood_services",
+      "title": "Michaelwood services"
+    },
+    "address": "North Nibley, Gloucestershire, GL11 6DF"
+  },
+  "yha-slimbridge": {
+    "wiki": {
+      "extract": "\n\nSlimbridge is a village and civil parish near Dursley in Gloucestershire, England.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/11/Gloucester_and_Sharpness_Canal_at_Patch_Bridge.jpg",
+      "url": "https://en.wikipedia.org/wiki/Slimbridge",
+      "title": "Slimbridge"
+    },
+    "address": "Newgrounds Lane, Slimbridge, Gloucestershire, GL2 7BP"
+  },
+  "tiverton-sc": {
+    "wiki": {
+      "extract": "Tiverton is a town and civil parish in Devon, England, and the commercial and administrative centre of the Mid Devon district. The population in 2019 was 20,587.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/The_Town_Hall%2C_Tiverton_%28geograph_4549312%29.jpg/3840px-The_Town_Hall%2C_Tiverton_%28geograph_4549312%29.jpg",
+      "url": "https://en.wikipedia.org/wiki/Tiverton%2C_Devon",
+      "title": "Tiverton, Devon"
+    },
+    "address": "Halberton, Devon, EX16 7FG"
+  },
+  "yha-exford": {
+    "wiki": {
+      "extract": "\n\nThere are many youth hostels in England and Wales. This article is intended to list all youth hostels operated by the Youth Hostels Association (YHA), either presently or formerly, and also independent hostels. The list is split into sections: hostels currently operated by YHA, independent hostels, and others, where others include former hostels previously operated by, or as part of, YHA some time since the creation of YHA in 1931. The primary sources for these lists are given in the references section.",
+      "image": null,
+      "url": "https://en.wikipedia.org/wiki/List_of_youth_hostels_in_England_and_Wales",
+      "title": "List of youth hostels in England and Wales"
+    },
+    "address": "Summerway, Cutcombe, Somerset, TA24 7BG"
+  },
+  "chippenham-sc": {
+    "wiki": {
+      "extract": "Chippenham is a market town and civil parish in north-west Wiltshire, England. It lies 13 miles (21 km) north-east of Bath, 86 miles (138 km) west of London and is near the Cotswolds Area of Outstanding Natural Beauty. The town was established on a crossing of the River Avon, where some form of settlement is believed to have existed since before Roman times. It was a royal vill and probably a royal hunting lodge, under Alfred the Great. The town continued to grow when the Great Western Railway arrived in 1841. In 2021 the parish had a population of 36,548.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6a/St_Andrew%27s_Chippenham.JPG",
+      "url": "https://en.wikipedia.org/wiki/Chippenham",
+      "title": "Chippenham"
+    },
+    "address": "Curlew Drive, Chippenham, Wiltshire, SN14 6YQ"
+  },
+  "yha-bath": {
+    "wiki": {
+      "extract": "Bath is a city in Somerset, England, known for and named after its Roman-built baths. At the 2021 census, the population was 94,080. Bath is in the valley of the River Avon, 97 miles (156 km) west of London and 11 miles (18 km) southeast of Bristol. The city became a UNESCO World Heritage Site in 1987, and was later added to the transnational World Heritage Site known as the \"Great Spa Towns of Europe\" in 2021. Bath is also the largest city and settlement in Somerset.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/08/Roman_Baths_in_Bath_Spa%2C_England_-_July_2006.jpg",
+      "url": "https://en.wikipedia.org/wiki/Bath%2C_Somerset",
+      "title": "Bath, Somerset"
+    },
+    "address": "Freeview Road, Bath, Bath and North East Somerset, BA2 1DJ"
+  },
+  "uttoxeter-sc": {
+    "wiki": {
+      "extract": "Uttoxeter is a market town and civil parish in the East Staffordshire borough of Staffordshire, England. It is near to the Derbyshire county border.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Uttoxeter_534277.jpg",
+      "url": "https://en.wikipedia.org/wiki/Uttoxeter",
+      "title": "Uttoxeter"
+    },
+    "address": "Dovefields, Uttoxeter, Staffordshire, ST14 8AE"
+  },
+  "yha-ilam": {
+    "wiki": {
+      "extract": "Ilam is a village in the Staffordshire Peak District of England, lying on the River Manifold. The population of the civil parish as taken at the 2011 census was 402.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Ilam.jpg",
+      "url": "https://en.wikipedia.org/wiki/Ilam%2C_Staffordshire",
+      "title": "Ilam, Staffordshire"
+    },
+    "address": "Ilam Moor Lane, Ilam, Staffordshire, DE6 2AZ"
+  },
+  "macc-end": {
+    "wiki": {
+      "extract": "Macclesfield is a market town and civil parish in the unitary authority of Cheshire East, Cheshire, England. It is sited on the River Bollin and the edge of the Cheshire Plain, with Macclesfield Forest to its east; the town lies 16 miles (26 km) south of Manchester and 38 miles (61 km) east of Chester.",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Macclesfield_Town_Hall_%2816339763521%29.jpg/3840px-Macclesfield_Town_Hall_%2816339763521%29.jpg",
+      "url": "https://en.wikipedia.org/wiki/Macclesfield",
+      "title": "Macclesfield"
+    },
+    "address": "Churchill Way, Macclesfield, Cheshire East, SK11 6UT"
+  }
+}
