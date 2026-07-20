@@ -48,6 +48,7 @@ export function computeTripStats(routes) {
     nature: allPois.filter((p) => p.type === "nature" || p.kind === "nature").length,
     totalStops: allPois.length,
     totalYears,
+    oldestId: oldest.id,
     oldestName: oldest.name,
     oldestAge: YEAR - oldest.built,
     counties: counties.size,

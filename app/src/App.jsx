@@ -72,6 +72,7 @@ export default function App() {
   const [editingName, setEditingName] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [saveHover, setSaveHover] = useState(false);
   const { savedRoutes, saveRoute, deleteRoute } = useSavedRoutes();
   const [syncCode, setSyncCodeState] = useState(getSyncCode);
   const [pulled, setPulled] = useState(false);
@@ -218,10 +219,36 @@ export default function App() {
     if (customRoute) setDirty(true);
   };
 
+  // Auto-generated names prompt a rename before the first save
+  const AUTO_NAMES = new Set(["Road Trip", "Sketched trip", "Top-rated trip"]);
+
   const saveTrip = () => {
-    if (!customRoute) return;
-    saveRoute(tripName, customRoute, { minRating, includeChargers });
+    if (!customRoute || !dirty) return;
+    let name = tripName;
+    if (AUTO_NAMES.has(name)) {
+      const entered = window.prompt(
+        "Give this trip a name before saving:",
+        name === "Road Trip" ? "My trip" : name
+      );
+      if (entered === null) return;
+      name = entered.trim() || name;
+      setTripName(name);
+    }
+    saveRoute(name, customRoute, { minRating, includeChargers });
     setDirty(false);
+  };
+
+  // Deep-link a stat to its point on the map (opens the detail card too)
+  const focusStatPoi = (id) => {
+    const wp = poiById.get(id);
+    if (!wp) return;
+    if (wp.type === "optional") setShowExtras(true);
+    focusWaypoint(wp);
+  };
+
+  const filterFromStat = (key, needsExtras = false) => {
+    setFilter(key);
+    if (needsExtras) setShowExtras(true);
   };
   const startSketch = () => {
     if (!routesReady) return;
@@ -357,18 +384,21 @@ export default function App() {
                   </button>
                 </>
               )}
-              {dirty && <span className="unsaved-tag">unsaved</span>}
               <button
-                className="trip-save"
+                className={`trip-save ${customRoute && dirty ? "trip-save--unsaved" : ""}`}
                 onClick={saveTrip}
-                disabled={!customRoute}
+                onMouseEnter={() => setSaveHover(true)}
+                onMouseLeave={() => setSaveHover(false)}
+                disabled={!customRoute || !dirty}
                 title={
-                  customRoute
-                    ? "Save this trip to your saved trips"
-                    : "Build or sketch a custom trip to save it — the classic loop is always here"
+                  !customRoute
+                    ? "Build or sketch a custom trip to save it — the classic loop is always here"
+                    : dirty
+                      ? "Save this trip (you'll be asked to name it first)"
+                      : "This trip is saved"
                 }
               >
-                SAVE
+                {!customRoute ? "SAVE" : dirty ? (saveHover ? "SAVE NOW" : "UNSAVED") : "SAVED ✓"}
               </button>
             </div>
             <button
@@ -637,8 +667,11 @@ export default function App() {
             {statsOpen && (
               <div className="trip-stats">
                 <div className="trip-stats__row">
-                  ⚡ ~{Math.round(tripStats.kwh)} kWh across {tripStats.chargers} Supercharger
-                  stops · about {Math.round(tripStats.miles / tripStats.driveH)} mph average
+                  ⚡ ~{Math.round(tripStats.kwh)} kWh across{" "}
+                  <button className="trip-stats__link" onClick={() => filterFromStat("charger")}>
+                    {tripStats.chargers} Supercharger stops
+                  </button>{" "}
+                  · about {Math.round(tripStats.miles / tripStats.driveH)} mph average
                 </div>
                 <div className="trip-stats__row">
                   🌱 ~{Math.round(tripStats.co2kg)} kg of tailpipe CO₂ a petrol car would have
@@ -650,17 +683,30 @@ export default function App() {
                   monuments
                 </div>
                 <div className="trip-stats__row">
-                  🍺 {tripStats.pubs} historic pubs · 🛏 {tripStats.stays} YHA nights · 🏞{" "}
-                  {tripStats.nature} wild landscapes · {tripStats.totalStops} possible stops in
-                  all
+                  🍺{" "}
+                  <button className="trip-stats__link" onClick={() => filterFromStat("pub", true)}>
+                    {tripStats.pubs} historic pubs
+                  </button>{" "}
+                  · 🛏{" "}
+                  <button className="trip-stats__link" onClick={() => filterFromStat("stay")}>
+                    {tripStats.stays} YHA nights
+                  </button>{" "}
+                  · 🏞{" "}
+                  <button className="trip-stats__link" onClick={() => filterFromStat("nature")}>
+                    {tripStats.nature} wild landscapes
+                  </button>{" "}
+                  · {tripStats.totalStops} possible stops in all
                 </div>
                 <div className="trip-stats__row">
                   🕰 Combined age of every datable site:{" "}
                   <strong>{tripStats.totalYears.toLocaleString()} years</strong>
                 </div>
                 <div className="trip-stats__row">
-                  👴 Oldest stop: {tripStats.oldestName} — humans here for ~
-                  {tripStats.oldestAge.toLocaleString()} years
+                  👴 Oldest stop:{" "}
+                  <button className="trip-stats__link" onClick={() => focusStatPoi(tripStats.oldestId)}>
+                    {tripStats.oldestName}
+                  </button>{" "}
+                  — humans here for ~{tripStats.oldestAge.toLocaleString()} years
                 </div>
                 <div className="trip-stats__row">
                   🗺 {tripStats.counties} counties &amp; council areas crossed
