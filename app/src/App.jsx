@@ -666,7 +666,7 @@ export default function App() {
                   🗺 {tripStats.counties} counties &amp; council areas crossed
                 </div>
                 <button className="trip-stats__print" onClick={() => setPrintTrip(true)}>
-                  🖨 Print whole trip — condensed A4 (4 pages)
+                  🖨 Print whole trip — condensed A4
                 </button>
               </div>
             )}
